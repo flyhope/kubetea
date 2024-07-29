@@ -1,0 +1,10 @@
+# copy this file to ~/.kube/kubetea.yaml
+
+cluster_by_label: app
+
+# pod cache when x second for update
+pod_cache_livetime_second: 5
+
+# show pod group filter
+cluster_filters:
+  - *
