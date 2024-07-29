@@ -8,11 +8,7 @@ on:
 jobs:  
   build-and-release:  
     runs-on: ubuntu-latest  
-    strategy:  
-      matrix:  
-        goos: [linux, windows, darwin]  # 编译目标操作系统  
-        goarch: [amd64, arm64]  # 编译目标架构，根据需要选择  
-  
+
     steps:  
       - name: Checkout code  
         uses: actions/checkout@v3  
@@ -25,14 +21,14 @@ jobs:
       - name: Build binaries  
         env:  
           CGO_ENABLED: 0  # 禁用 CGO 以创建静态链接的二进制文件  
-        run: |  
-          for GOOS in ${{ matrix.goos }}; do  
-            for GOARCH in ${{ matrix.goarch }}; do  
-              echo "Building $GOOS-$GOARCH"  
-              go env
-              GOOS=$GOOS GOARCH=$GOARCH go build -o kubetea-$GOOS-$GOARCH ./
-            done  
-          done  
+        run: |
+          platforms="linux/amd64 linux/arm64 windows/amd64 windows/arm64 darwin/amd64 darwin/arm64"
+          for platform in $platforms; do
+            os=$(echo $platform | cut -d'/' -f1)
+            arch=$(echo $platform | cut -d'/' -f2)
+            echo "Building $os-$arch"
+            GOOS=$os GOARCH=$arch go build -o kubetea-$os-$arch ./
+          done
    
       - name: Create Release  
         id: create_release  
