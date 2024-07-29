@@ -26,4 +26,6 @@ pkg/
 
 .*
 
+# bin
 __debug_bin*
+kubetea*

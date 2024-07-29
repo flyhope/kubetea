@@ -1,6 +1,5 @@
 package view
 
-import "C"
 import (
 	"fmt"
 	"github.com/charmbracelet/bubbles/table"
