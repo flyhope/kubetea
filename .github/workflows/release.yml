@@ -29,6 +29,7 @@ jobs:
           for GOOS in ${{ matrix.goos }}; do  
             for GOARCH in ${{ matrix.goarch }}; do  
               echo "Building $GOOS-$GOARCH"  
+              go env
               GOOS=$GOOS GOARCH=$GOARCH go build -o kubetea-$GOOS-$GOARCH ./
             done  
           done  
