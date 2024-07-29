@@ -42,11 +42,10 @@ jobs:
           tag_name: ${{ github.ref_name }}  
           name: Release ${{ github.ref_name }}  
           body: |  
-            Release notes for ${{ github.ref_name }}  
-            - Some changes  
-            - More changes  
-          draft: false  
-          prerelease: false  
+            Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.RELEASE_TOKEN }}
           files: |  
             kubetea-linux-amd64
             kubetea-linux-arm64
@@ -62,6 +61,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         with:  
           upload_url: ${{ steps.create_release.outputs.upload_url }}  
-          asset_path: ./myapp-${{ matrix.goos }}-${{ matrix.goarch }}  
-          asset_name: myapp-${{ matrix.goos }}-${{ matrix.goarch }}  
+          asset_path: ./kubetea-${{ matrix.goos }}-${{ matrix.goarch }}
+          asset_name: kubetea-${{ matrix.goos }}-${{ matrix.goarch }}
           asset_content_type: application/octet-stream
