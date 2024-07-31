@@ -28,10 +28,15 @@ var ShowKubeConfigPath = sync.OnceValue(func() string {
 // ShowKubeConfig 获取kube的配置
 var ShowKubeConfig = sync.OnceValue(func() *restclient.Config {
 
-	// 加载 kubeconfig 文件
-	config, err := clientcmd.BuildConfigFromFlags("", ShowKubeConfigPath())
+	configOverrides := &clientcmd.ConfigOverrides{
+		CurrentContext: ShowContext(),
+	}
+	config, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: ShowKubeConfigPath()},
+		configOverrides,
+	).ClientConfig()
 	if err != nil {
-		logrus.Fatalf("Error loading kubeconfig: %v", err)
+		logrus.Fatalf("Error loading kubeconfig: %v\n", err)
 	}
 
 	return config
@@ -57,7 +62,7 @@ func ShowNamespace() string {
 	}
 
 	config := ShowApiConfig()
-	currentContext := config.CurrentContext
+	currentContext := ShowContext()
 	contextDetails := config.Contexts[currentContext]
 	if contextDetails == nil {
 		logrus.Fatal("\"current context not found in kubeconfig")
