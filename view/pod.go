@@ -40,9 +40,8 @@ func (c *podModel) updateData(force bool) {
 
 			// 格式化时间输出
 			timeStr := "-"
-			startTime := pod.Status.StartTime
-			if startTime == nil {
-				timeStr = pod.Status.StartTime.Format(time.DateTime)
+			if startTime := pod.Status.StartTime; startTime != nil {
+				timeStr = startTime.Format(time.DateTime)
 			}
 
 			rows = append(rows, table.Row{
