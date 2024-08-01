@@ -38,11 +38,18 @@ func (c *podModel) updateData(force bool) {
 			//	name = strings.TrimLeft(name, "-_.")
 			//}
 
+			// 格式化时间输出
+			timeStr := "-"
+			startTime := pod.Status.StartTime
+			if startTime == nil {
+				timeStr = pod.Status.StartTime.Format(time.DateTime)
+			}
+
 			rows = append(rows, table.Row{
 				name,
 				pod.Status.PodIP,
 				PodPhaseView(pod.Status.Phase),
-				pod.Status.StartTime.Format(time.DateTime),
+				timeStr,
 			})
 		}
 	}
