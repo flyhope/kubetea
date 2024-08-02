@@ -58,7 +58,7 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 	m.Table = ui.NewTableWithData([]table.Column{
 		{Title: "容器名称", Width: 0},
 		{Title: "镜像地址", Width: 0},
-		{Title: "状态", Width: 5},
+		{Title: "状态", Width: 4},
 		{Title: "就绪", Width: 4},
 	}, nil)
 	m.updateData(false)
@@ -118,10 +118,10 @@ func getBoolString(val bool) string {
 func getContainerState(status v1.ContainerStatus) string {
 	if status.State.Waiting != nil {
 		return "♾️"
-	} else if status.State.Running != nil {
-		return "✔️"
 	} else if status.State.Terminated != nil {
 		return "✴️"
+	} else if status.State.Running != nil {
+		return "✔️"
 	}
 	return "❓️"
 }
