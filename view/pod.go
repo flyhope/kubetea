@@ -40,15 +40,15 @@ func (c *podModel) updateData(force bool) {
 
 			// 格式化时间输出
 			timeStr := "-"
-			startTime := pod.Status.StartTime
-			if startTime == nil {
-				timeStr = pod.Status.StartTime.Format(time.DateTime)
+			if startTime := pod.Status.StartTime; startTime != nil {
+				timeStr = startTime.Format(time.DateTime)
 			}
 
 			rows = append(rows, table.Row{
 				name,
 				pod.Status.PodIP,
-				PodPhaseView(pod.Status.Phase),
+				PodPhaseView(pod),
+				PodReadyView(pod),
 				timeStr,
 			})
 		}
@@ -76,7 +76,8 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 	m.TableFilter.Table = ui.NewTableWithData([]table.Column{
 		{Title: "名称", Width: 0},
 		{Title: "IP", Width: 15},
-		{Title: "状态", Width: 9},
+		{Title: "状态", Width: 4},
+		{Title: "就绪", Width: 4},
 		{Title: "启动时间", Width: 19},
 	}, nil)
 	m.TableFilter.Focus()
@@ -135,13 +136,29 @@ var phaseAlias = map[v1.PodPhase]string{
 	v1.PodSucceeded: "🔅",
 	v1.PodFailed:    "❌️",
 	v1.PodUnknown:   "❓️",
+	"Terminating":   "✴️",
 }
 
 // PodPhaseView 友好显示POD状态
-func PodPhaseView(phaes v1.PodPhase) string {
-	result := phaseAlias[phaes]
+func PodPhaseView(pod v1.Pod) string {
+	phase := pod.Status.Phase
+	if pod.DeletionTimestamp != nil {
+		phase = "Terminating"
+	}
+
+	result := phaseAlias[phase]
 	if result == "" {
-		result = string(phaes)
+		result = string(phase)
 	}
 	return result
+}
+
+// PodReadyView 友好显示POD的Ready状态
+func PodReadyView(pod v1.Pod) string {
+	for _, condition := range pod.Status.Conditions {
+		if condition.Type == v1.PodReady && condition.Status == v1.ConditionTrue {
+			return "✔️"
+		}
+	}
+	return "❌️"
 }
