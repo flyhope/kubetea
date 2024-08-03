@@ -32,6 +32,8 @@ jobs:
             echo "Building $os-$arch"
             GOOS=$os GOARCH=$arch go build -o kubetea-$os-$arch ./
           done
+          mv kubetea-windows-amd64 kubetea-windows-amd64.exe
+          mv kubetea-windows-arm64 kubetea-windows-arm64.exe
 
       - name: Upload Asset
         uses: softprops/action-gh-release@v2
@@ -40,8 +42,8 @@ jobs:
           files: |
             kubetea-linux-amd64
             kubetea-linux-arm64
-            kubetea-windows-amd64
-            kubetea-windows-arm64
+            kubetea-windows-amd64.exe
+            kubetea-windows-arm64.exe
             kubetea-darwin-amd64
             kubetea-darwin-arm64
 
