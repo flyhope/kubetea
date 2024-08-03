@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/charmbracelet/bubbles/timer"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -97,14 +96,6 @@ func (m *TableFilter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.Table.AutoResize(msgType)
 		m.Table.AutoColSize()
-
-	case timer.TickMsg:
-		var cmd tea.Cmd
-		return m, cmd
-
-	case timer.StartStopMsg:
-		var cmd tea.Cmd
-		return m, cmd
 	}
 
 	return m, nil
