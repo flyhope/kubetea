@@ -79,11 +79,13 @@ func (p *podCache) Show(name string, force bool) (*v12.Pod, time.Time, error) {
 				return nil, p.CreatedAt, err
 			}
 		}
-		if p.pods == nil {
+
+		pods := p.showCachePods()
+		if pods == nil {
 			return nil, time.Now(), errors.New("empty pods")
 		}
 
-		for _, pod := range p.pods.Items {
+		for _, pod := range pods.Items {
 			if pod.Name == name {
 				return &pod, p.CreatedAt, nil
 			}

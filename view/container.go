@@ -28,7 +28,8 @@ func (m *containerModel) updateData(force bool) {
 		logrus.Fatal(err)
 	}
 
-	rows := make([]table.Row, 0)
+	// 获取 container
+	rows := make([]table.Row, 0, len(pod.Status.ContainerStatuses))
 	for _, container := range pod.Status.ContainerStatuses {
 		rows = append(rows, table.Row{
 			container.Name,
@@ -37,10 +38,25 @@ func (m *containerModel) updateData(force bool) {
 			getBoolString(container.Ready),
 		})
 	}
-
 	sort.Slice(rows, func(i, j int) bool {
 		return rows[i][0] < rows[j][0]
 	})
+
+	// 展示 init container
+	initRows := make([]table.Row, 0, len(pod.Status.InitContainerStatuses))
+	for _, container := range pod.Status.InitContainerStatuses {
+		initRows = append(initRows, table.Row{
+			container.Name,
+			container.Image,
+			getContainerState(container),
+			getBoolString(container.Ready),
+		})
+	}
+	sort.Slice(initRows, func(i, j int) bool {
+		return initRows[i][0] < initRows[j][0]
+	})
+	rows = append(rows, initRows...)
+
 	m.Table.SetRows(rows)
 	m.SubDescs = []string{
 		fmt.Sprintf("合计：%d", len(rows)),
@@ -69,35 +85,43 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 		// 按键事件
 		case tea.KeyMsg:
 			switch msgType.String() {
-			// 返回上一级
-			case "esc":
-				if !m.TableFilter.Input.Focused() {
-					return m.GoBack()
-				}
 			case "alt+left", "ctrl+left":
 				return m.GoBack()
-
-			// 进入容器Shell
-			case "enter", "s":
-				return m, ui.NewCmd(k8s.ContainerShell(m.PodName, row[0]))
-			// 查看日志
-			case "l":
-				containerLog := k8s.ContainerLog(m.PodName, row[0])
-				podLogs, err := containerLog.Stream(comm.Context.Context)
-				if err != nil {
-					logrus.Fatalf("Error getting logs: %s\n", err.Error())
-				}
-				defer podLogs.Close()
-
-				buf := new(bytes.Buffer)
-				_, err = io.Copy(buf, podLogs)
-				if err != nil {
-					logrus.Fatalf("Error copying logs: %s\n", err.Error())
-				}
-				return ui.PageViewContent(m.PodName, buf.String(), m), nil
 			}
+		// 数据更新事件
 		case comm.MsgPodCache, comm.MsgUIBack:
 			m.updateData(false)
+		}
+
+		// 仅在未输入状态下，响应按键事件
+		if !m.TableFilter.Input.Focused() {
+			switch msgType := msg.(type) {
+			// 按键事件
+			case tea.KeyMsg:
+				switch msgType.String() {
+				// 返回上一级
+				case "esc":
+					return m.GoBack()
+				// 进入容器Shell
+				case "enter", "s":
+					return m, ui.NewCmd(k8s.ContainerShell(m.PodName, row[0]))
+				// 查看日志
+				case "l":
+					containerLog := k8s.ContainerLog(m.PodName, row[0])
+					podLogs, err := containerLog.Stream(comm.Context.Context)
+					if err != nil {
+						logrus.Fatalf("Error getting logs: %s\n", err.Error())
+					}
+					defer podLogs.Close()
+
+					buf := new(bytes.Buffer)
+					_, err = io.Copy(buf, podLogs)
+					if err != nil {
+						logrus.Fatalf("Error copying logs: %s\n", err.Error())
+					}
+					return ui.PageViewContent(m.PodName, buf.String(), m), nil
+				}
+			}
 		}
 		return nil, nil
 	}
