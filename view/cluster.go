@@ -21,7 +21,7 @@ type clusterModel struct {
 
 // 更新数据
 func (c *clusterModel) updateData(force bool) {
-	config := comm.ShowKConfig()
+	config := comm.ShowKubeteaConfig()
 	groupLabels := make(map[string]int)
 
 	pods, err := k8s.PodCache().ShowList(force)
