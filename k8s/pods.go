@@ -103,7 +103,7 @@ func (p *podCache) needUpdate() bool {
 
 var PodCache = sync.OnceValue(func() *podCache {
 	c := &podCache{
-		livetime: time.Second * time.Duration(comm.ShowKConfig().PodCacheLivetime),
+		livetime: time.Second * time.Duration(comm.ShowKubeteaConfig().PodCacheLivetime),
 		dataRead: make(chan bool),
 	}
 	return c
