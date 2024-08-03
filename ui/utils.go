@@ -59,10 +59,15 @@ func WindowSize() tea.WindowSizeMsg {
 
 // Abstract 含有上级来源的Model
 type Abstract struct {
+	Model     tea.Model
 	LastModel tea.Model
 }
 
 func (m *Abstract) GoBack() (tea.Model, tea.Cmd) {
+	if m.LastModel == nil {
+		return m.Model, tea.Quit
+	}
+
 	model, cmd := ViewModel(m.LastModel)
 	model.Update(comm.MsgUIBack(true))
 	return model, cmd

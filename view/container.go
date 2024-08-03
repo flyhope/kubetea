@@ -71,6 +71,8 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 		TableFilter: ui.NewTableFilter(),
 		PodName:     podName,
 	}
+	m.Abstract.Model = m
+
 	m.Table = ui.NewTableWithData([]table.Column{
 		{Title: "容器名称", Width: 0},
 		{Title: "镜像地址", Width: 0},
@@ -105,6 +107,13 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 				// 进入容器Shell
 				case "enter", "s":
 					return m, ui.NewCmd(k8s.ContainerShell(m.PodName, row[0]))
+				// 查看JSON数据
+				case "i":
+					pod, _, err := k8s.PodCache().Show(m.PodName, false)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+					return ui.ViewModel(ui.PageViewJson(pod.Name, pod, m))
 				// 查看日志
 				case "l":
 					containerLog := k8s.ContainerLog(m.PodName, row[0])

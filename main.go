@@ -26,6 +26,13 @@ func main() {
 			comm.Context = context
 			return nil
 		},
+		ExitErrHandler: func(context *cli.Context, err error) {
+			if err != nil {
+				comm.LogSetStdout()
+				logrus.Fatal(err)
+			}
+		},
+
 		Action: view.Action,
 	}
 

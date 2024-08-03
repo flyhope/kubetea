@@ -73,6 +73,8 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 		TableFilter: ui.NewTableFilter(),
 		app:         app,
 	}
+	m.Abstract.Model = m
+
 	m.TableFilter.Table = ui.NewTableWithData([]table.Column{
 		{Title: "名称", Width: 0},
 		{Title: "IP", Width: 15},
