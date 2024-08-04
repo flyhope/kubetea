@@ -15,7 +15,7 @@ func LogSetStdout() {
 
 // LogSetFile 设置日志输出为文件
 func LogSetFile() {
-	logrus.SetLevel(ShowKubeteaConfig().Log.Level)
+	logrus.SetLevel(logrus.Level(ShowKubeteaConfig().Log.Level))
 
 	// 创建日志目录
 	dir := FixPath(ShowKubeteaConfig().Log.Dir)

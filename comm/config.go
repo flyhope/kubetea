@@ -14,16 +14,7 @@ var kubeteaDefaultYaml []byte
 
 // ShowKubeteaConfig 获取k.yaml配置
 var ShowKubeteaConfig = sync.OnceValue(func() *KubeteaConfig {
-	config := &KubeteaConfig{
-		ClusterByLabel:   "app",
-		PodCacheLivetime: 10,
-		Log: KubeteaConfigLog{
-			Dir:          "~/.kubetea/logs",
-			FileTotalMax: 10,
-			Level:        logrus.InfoLevel,
-		},
-		ClusterFilters: []string{"*"},
-	}
+	config := new(KubeteaConfig)
 
 	// 文件件在才继续加载配置
 	configFilePath := FixPath(Context.String("config"))
@@ -70,9 +61,9 @@ type KubeteaConfig struct {
 }
 
 type KubeteaConfigLog struct {
-	Dir          string       `yaml:"dir"`
-	FileTotalMax int          `yaml:"file_total_max"`
-	Level        logrus.Level `yaml:"level"`
+	Dir          string `yaml:"dir"`
+	FileTotalMax int    `yaml:"file_total_max"`
+	Level        uint32 `yaml:"level"`
 }
 
 type KubeteaConfigSort struct {
