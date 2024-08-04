@@ -20,7 +20,17 @@ jobs:
         uses: actions/setup-go@v5  
         with:  
           go-version: 1.22
-  
+
+      - name: Set build version info
+        id: version_info
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          BUILD_TIME=$(date +%s)
+          GIT_COMMIT=$(git rev-parse HEAD)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
+          echo "GIT_COMMIT=$GIT_COMMIT" >> $GITHUB_ENV
+
       - name: Build binaries  
         env:  
           CGO_ENABLED: 0  # 禁用 CGO 以创建静态链接的二进制文件  
@@ -30,7 +40,7 @@ jobs:
             os=$(echo $platform | cut -d'/' -f1)
             arch=$(echo $platform | cut -d'/' -f2)
             echo "Building $os-$arch"
-            GOOS=$os GOARCH=$arch go build -o kubetea-$os-$arch ./
+            GOOS=$os GOARCH=$arch go build -ldflags "-X 'github.com/flyhope/kubetea/action.Ver=${VERSION}' -X 'github.com/flyhope/kubetea/action.BuildTime=${BUILD_TIME}' -X 'github.com/flyhope/kubetea/action.GitCommit=${GIT_COMMIT}'" -o kubetea-$os-$arch ./
           done
           mv kubetea-windows-amd64 kubetea-windows-amd64.exe
           mv kubetea-windows-arm64 kubetea-windows-arm64.exe

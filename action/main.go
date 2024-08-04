@@ -1,15 +1,16 @@
-package view
+package action
 
 import (
 	"errors"
 	"github.com/flyhope/kubetea/comm"
 	"github.com/flyhope/kubetea/k8s"
 	"github.com/flyhope/kubetea/ui"
+	"github.com/flyhope/kubetea/view"
 	"github.com/urfave/cli/v2"
 )
 
-// Action 主入口
-func Action(c *cli.Context) error {
+// Main 主入口
+func Main(c *cli.Context) error {
 	// 设置日志
 	comm.LogSetFile()
 
@@ -20,7 +21,7 @@ func Action(c *cli.Context) error {
 	}
 
 	// 展示首屏内容
-	m, err := ShowCluster()
+	m, err := view.ShowCluster()
 	if err != nil {
 		return err
 	}
@@ -57,7 +58,7 @@ func ActionPod(ipOrName string) error {
 		return errors.New("pod not found")
 	}
 
-	uiModel, errModel := ShowContainer(podName, nil)
+	uiModel, errModel := view.ShowContainer(podName, nil)
 	if errModel != nil {
 		return errModel
 	}
