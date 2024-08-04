@@ -54,12 +54,17 @@ var ShowKubeteaConfig = sync.OnceValue(func() *KubeteaConfig {
 
 // KubeteaConfig YAML配置定义
 type KubeteaConfig struct {
-	PodCacheLivetime uint32            `yaml:"pod_cache_livetime_second"` // 缓存Pod过期时间，过期自动刷新
-	Log              KubeteaConfigLog  `yaml:"log"`                       // 日志配置
-	ClusterByLabel   string            `yaml:"cluster_by_label"`          // 筛选显示cluster的Label的名称
-	ClusterFilters   []string          `yaml:"cluster_filters"`           // 筛选显示cluster的Label的值，支持glob
-	Sort             KubeteaConfigSort `yaml:"sort"`                      // 自定义排序
-	Template         KubeteaTemplate   `yaml:"template"`                  // 显示模板定义
+	PodCacheLivetime uint32                                       `yaml:"pod_cache_livetime_second"` // 缓存Pod过期时间，过期自动刷新
+	Log              KubeteaConfigLog                             `yaml:"log"`                       // 日志配置
+	ClusterByLabel   string                                       `yaml:"cluster_by_label"`          // 筛选显示cluster的Label的名称
+	ClusterFilters   []string                                     `yaml:"cluster_filters"`           // 筛选显示cluster的Label的值，支持glob
+	Sort             KubeteaConfigSort                            `yaml:"sort"`                      // 自定义排序
+	Template         map[ConfigTemplateName]*KubeteaTemplateTable `yaml:"template"`                  // 显示模板定义
+}
+
+// ShowTemplateColumn 根据名称获取一个TableName
+func (k *KubeteaConfig) ShowTemplateColumn(name ConfigTemplateName) []table.Column {
+	return k.Template[name].Column
 }
 
 type KubeteaConfigLog struct {
@@ -71,12 +76,15 @@ type KubeteaConfigLog struct {
 type KubeteaConfigSort struct {
 	Container SortMap `yaml:"container"`
 }
-
-type KubeteaTemplate struct {
-	Pod KubeteaTemplateTable `yaml:"pod"`
-}
-
 type KubeteaTemplateTable struct {
 	Column []table.Column `yaml:"column"`
 	Body   []string       `yaml:"body"`
 }
+
+type ConfigTemplateName string
+
+const (
+	ConfigTemplateCluster   ConfigTemplateName = "cluster"
+	ConfigTemplatePod       ConfigTemplateName = "pod"
+	ConfigTemplateContainer ConfigTemplateName = "container"
+)

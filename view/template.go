@@ -1,7 +1,11 @@
 package view
 
 import (
+	"bytes"
+	"github.com/flyhope/kubetea/comm"
+	"github.com/sirupsen/logrus"
 	"html/template"
+	"sync"
 	"time"
 )
 
@@ -37,4 +41,47 @@ func NewTmplParseSlice(texts []string) ([]*template.Template, error) {
 		templates = append(templates, newTmpl)
 	}
 	return templates, nil
+}
+
+type templateStore struct {
+	lock  *sync.RWMutex
+	store map[comm.ConfigTemplateName][]*template.Template
+}
+
+var TemplateStore = &templateStore{
+	lock:  new(sync.RWMutex),
+	store: make(map[comm.ConfigTemplateName][]*template.Template),
+}
+
+// Get 根据KEY获取一个模板
+func (t *templateStore) Get(name comm.ConfigTemplateName) []*template.Template {
+	t.lock.RLock()
+	data, ok := t.store[name]
+	t.lock.RUnlock()
+	if !ok {
+		var err error
+		configTemplate := comm.ShowKubeteaConfig().Template[name]
+		if data, err = NewTmplParseSlice(configTemplate.Body); err != nil {
+			logrus.WithFields(logrus.Fields{"name": name}).Fatal(err)
+		}
+		t.lock.Lock()
+		t.store[name] = data
+		t.lock.Unlock()
+	}
+
+	return data
+}
+
+// TemplateRender 根据名称批量渲染模板
+func TemplateRender(name comm.ConfigTemplateName, data any) []string {
+	tmpls := TemplateStore.Get(name)
+	result := make([]string, 0, len(tmpls))
+	for _, tmpl := range tmpls {
+		var buf bytes.Buffer
+		if errExecute := tmpl.Execute(&buf, data); errExecute != nil {
+			logrus.Warnln(errExecute)
+		}
+		result = append(result, buf.String())
+	}
+	return result
 }
