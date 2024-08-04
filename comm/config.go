@@ -2,6 +2,7 @@ package comm
 
 import (
 	_ "embed"
+	"github.com/charmbracelet/bubbles/table"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"os"
@@ -58,6 +59,7 @@ type KubeteaConfig struct {
 	ClusterByLabel   string            `yaml:"cluster_by_label"`          // 筛选显示cluster的Label的名称
 	ClusterFilters   []string          `yaml:"cluster_filters"`           // 筛选显示cluster的Label的值，支持glob
 	Sort             KubeteaConfigSort `yaml:"sort"`                      // 自定义排序
+	Template         KubeteaTemplate   `yaml:"template"`                  // 显示模板定义
 }
 
 type KubeteaConfigLog struct {
@@ -68,4 +70,13 @@ type KubeteaConfigLog struct {
 
 type KubeteaConfigSort struct {
 	Container SortMap `yaml:"container"`
+}
+
+type KubeteaTemplate struct {
+	Pod KubeteaTemplateTable `yaml:"pod"`
+}
+
+type KubeteaTemplateTable struct {
+	Column []table.Column `yaml:"column"`
+	Body   []string       `yaml:"body"`
 }

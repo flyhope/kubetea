@@ -23,3 +23,21 @@ sort:
   container:
     "name-a": 1
     "name-b": 2
+
+# template view define
+template:
+  pod:
+    column:
+      - { title: "名称", width: 0 }
+      - { title: "IP", width: 15 }
+      - { title: "状态", width: 4 }
+      - { title: "就绪", width: 4 }
+      - { title: "启动时间", width: 19 }
+    body:
+      # first cloume must be .Name
+      - "{{ .Name }}"
+      - "{{ .Status.PodIP }}"
+      - "{{ PodPhaseView . }}"
+      - "{{ PodReadyView . }}"
+      - "{{ if .Status.StartTime }}{{ FormatTime .Status.StartTime.Time }}{{else}}-{{end}}"
+

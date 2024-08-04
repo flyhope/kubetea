@@ -1,6 +1,7 @@
 package view
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -8,6 +9,7 @@ import (
 	"github.com/flyhope/kubetea/k8s"
 	"github.com/flyhope/kubetea/ui"
 	"github.com/sirupsen/logrus"
+	"html/template"
 	v1 "k8s.io/api/core/v1"
 	"sort"
 	"time"
@@ -17,7 +19,8 @@ import (
 type podModel struct {
 	ui.Abstract
 	*ui.TableFilter
-	app string
+	app       string
+	templates []*template.Template
 }
 
 // 更新数据
@@ -32,25 +35,35 @@ func (c *podModel) updateData(force bool) {
 	for _, pod := range pods.Items {
 		if pod.Labels["app"] == c.app {
 
-			name := pod.Name
-			//if strings.Index(name, app) == 0 {
-			//	name = name[len(app):]
-			//	name = strings.TrimLeft(name, "-_.")
-			//}
-
-			// 格式化时间输出
-			timeStr := "-"
-			if startTime := pod.Status.StartTime; startTime != nil {
-				timeStr = startTime.Format(time.DateTime)
+			row := make(table.Row, 0, len(c.templates))
+			for _, tmpl := range c.templates {
+				var buf bytes.Buffer
+				if errExecute := tmpl.Execute(&buf, pod); errExecute != nil {
+					logrus.Warnln(errExecute)
+				}
+				row = append(row, buf.String())
 			}
+			rows = append(rows, row)
 
-			rows = append(rows, table.Row{
-				name,
-				pod.Status.PodIP,
-				PodPhaseView(pod),
-				PodReadyView(pod),
-				timeStr,
-			})
+			//name := pod.Name
+			////if strings.Index(name, app) == 0 {
+			////	name = name[len(app):]
+			////	name = strings.TrimLeft(name, "-_.")
+			////}
+			//
+			//// 格式化时间输出
+			//timeStr := "-"
+			//if startTime := pod.Status.StartTime; startTime != nil {
+			//	timeStr = startTime.Format(time.DateTime)
+			//}
+			//
+			//rows = append(rows, table.Row{
+			//	name,
+			//	pod.Status.PodIP,
+			//	PodPhaseView(pod),
+			//	PodReadyView(pod),
+			//	timeStr,
+			//})
 		}
 	}
 
@@ -67,21 +80,21 @@ func (c *podModel) updateData(force bool) {
 
 // ShowPod 获取POD列表
 func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
+	templates, errTmpl := NewTmplParseSlice(comm.ShowKubeteaConfig().Template.Pod.Body)
+	if errTmpl != nil {
+		return nil, errTmpl
+	}
+
 	// 渲染UI
 	m := &podModel{
 		Abstract:    ui.Abstract{LastModel: lastModel},
 		TableFilter: ui.NewTableFilter(),
 		app:         app,
+		templates:   templates,
 	}
 	m.Abstract.Model = m
 
-	m.TableFilter.Table = ui.NewTableWithData([]table.Column{
-		{Title: "名称", Width: 0},
-		{Title: "IP", Width: 15},
-		{Title: "状态", Width: 4},
-		{Title: "就绪", Width: 4},
-		{Title: "启动时间", Width: 19},
-	}, nil)
+	m.TableFilter.Table = ui.NewTableWithData(comm.ShowKubeteaConfig().Template.Pod.Column, nil)
 	m.TableFilter.Focus()
 	m.updateData(false)
 
