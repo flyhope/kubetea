@@ -43,6 +43,7 @@ func (c *clusterModel) updateData(force bool) {
 			if ok {
 				groupLabels[groupLabelValue] = idx
 				labelTotal[groupLabelValue]++
+				break
 			}
 		}
 	}
@@ -52,6 +53,7 @@ func (c *clusterModel) updateData(force bool) {
 	for label := range groupLabels {
 		rows = append(rows, table.Row{label, strconv.Itoa(labelTotal[label])})
 	}
+
 	sort.Slice(rows, func(i, j int) bool {
 		if groupLabels[rows[i][0]] != groupLabels[rows[j][0]] {
 			return groupLabels[rows[i][0]] < groupLabels[rows[j][0]]
