@@ -194,10 +194,10 @@ func (m *PageView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				// 控制模式
 				switch msgType.String() {
-				case "g":
+				case "g", "home":
 					m.viewport.GotoTop()
 					return m, nil
-				case "G":
+				case "G", "end":
 					m.viewport.GotoBottom()
 					return m, nil
 				case ":": // 命令模式
