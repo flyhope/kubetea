@@ -27,6 +27,9 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/}
           BUILD_TIME=$(date +%s)
           GIT_COMMIT=$(git rev-parse HEAD)
+          echo "VERSION=$VERSION"
+          echo "BUILD_TIME=$BUILD_TIME"
+          echo "GIT_COMMIT=$GIT_COMMIT"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "BUILD_TIME=$BUILD_TIME" >> $GITHUB_ENV
           echo "GIT_COMMIT=$GIT_COMMIT" >> $GITHUB_ENV
