@@ -4,7 +4,9 @@ import (
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/flyhope/kubetea/comm"
 	"slices"
+	"sort"
 	"strings"
 	"unicode/utf8"
 )
@@ -114,4 +116,18 @@ func NewTableWithData(columns []table.Column, rows []table.Row) Table {
 	t.AutoResize(WindowSize())
 
 	return *t
+}
+
+// TableRowsSort 对Rows进行指定名称排序
+func TableRowsSort(rows []table.Row, sortByMap comm.SortMap) {
+	sort.Slice(rows, func(i, j int) bool {
+		sortValueI := sortByMap.SortVal(rows[i][0])
+		sortValueJ := sortByMap.SortVal(rows[j][0])
+
+		if sortValueI != sortValueJ {
+			return sortValueI < sortValueJ
+		}
+
+		return rows[i][0] < rows[j][0]
+	})
 }
