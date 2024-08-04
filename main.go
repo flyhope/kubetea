@@ -1,11 +1,17 @@
 package main
 
 import (
+	"github.com/flyhope/kubetea/action"
 	"github.com/flyhope/kubetea/comm"
-	"github.com/flyhope/kubetea/view"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"os"
+)
+
+var (
+	Version   string
+	BuildTime string
+	GitCommit string
 )
 
 func main() {
@@ -21,7 +27,7 @@ func main() {
 			&cli.StringFlag{Name: "context"},
 			&cli.StringFlag{Name: "kubeconfig", Aliases: []string{"k"}, Usage: "(optional) absolute path to the kubeconfig file"},
 		},
-		Commands: router(),
+		Commands: action.Router(),
 		Before: func(context *cli.Context) error {
 			comm.Context = context
 			return nil
@@ -32,8 +38,7 @@ func main() {
 				logrus.Fatal(err)
 			}
 		},
-
-		Action: view.Action,
+		Action: action.Main,
 	}
 
 	if err := app.Run(os.Args); err != nil {
