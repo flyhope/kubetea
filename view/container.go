@@ -11,7 +11,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	v1 "k8s.io/api/core/v1"
-	"sort"
 	"time"
 )
 
@@ -38,9 +37,7 @@ func (m *containerModel) updateData(force bool) {
 			getBoolString(container.Ready),
 		})
 	}
-	sort.Slice(rows, func(i, j int) bool {
-		return rows[i][0] < rows[j][0]
-	})
+	ui.TableRowsSort(rows, comm.ShowKubeteaConfig().Sort.Container)
 
 	// 展示 init container
 	initRows := make([]table.Row, 0, len(pod.Status.InitContainerStatuses))
@@ -52,9 +49,7 @@ func (m *containerModel) updateData(force bool) {
 			getBoolString(container.Ready),
 		})
 	}
-	sort.Slice(initRows, func(i, j int) bool {
-		return initRows[i][0] < initRows[j][0]
-	})
+	ui.TableRowsSort(initRows, comm.ShowKubeteaConfig().Sort.Container)
 	rows = append(rows, initRows...)
 
 	m.Table.SetRows(rows)
