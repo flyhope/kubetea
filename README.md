@@ -23,15 +23,15 @@ kubetea
 
 key map
 
-| Key    | Description           | cluster | pod | container |
-|--------|-----------------------|---------|-----|-----------|
-| esc    | exit or go back       | ✅️      | ✅️  | ✅️        |
-| ctrl+c | exit                  | ✅️      | ✅️  | ✅️        |
-| j,↓    | table row select down | ✅️      | ✅️  | ✅️        |
-| k,↑    | table row select up   | ✅️      | ✅️  | ✅️        |
-| /      | search input focus    | ✅️      | ✅️  | ✅️        |
-| i      | pod infomation        | ❌️      | ✅️  | ✅️        |
-| s      | shell                 | ❌️      | ❌️  | ✅️        |
+| Key    | Description           | cluster  | pod | container |
+|--------|-----------------------|:--------:|:---:|:---------:|
+| esc    | exit or go back       |    ✅️    | ✅️  |    ✅️     |
+| ctrl+c | exit                  |    ✅️    | ✅️  |    ✅️     |
+| j,↓    | table row select down |    ✅️    | ✅️  |    ✅️     |
+| k,↑    | table row select up   |    ✅️    | ✅️  |    ✅️     |
+| /      | search input focus    |    ✅️    | ✅️  |    ✅️     |
+| i      | pod infomation        |    ❌️    | ✅️  |    ✅️     |
+| s      | shell                 |    ❌️    | ❌️  |    ✅️     |
 
 page key map (exmaple: pod infomation)
 
