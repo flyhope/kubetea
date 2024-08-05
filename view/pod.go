@@ -123,8 +123,8 @@ var phaseAlias = map[v1.PodPhase]string{
 	"Terminating":   "✴️",
 }
 
-// PodPhaseView 友好显示POD状态
-func PodPhaseView(pod v1.Pod) string {
+// podPhaseView 友好显示POD状态
+func podPhaseView(pod v1.Pod) string {
 	phase := pod.Status.Phase
 	if pod.DeletionTimestamp != nil {
 		phase = "Terminating"
@@ -137,8 +137,8 @@ func PodPhaseView(pod v1.Pod) string {
 	return result
 }
 
-// PodReadyView 友好显示POD的Ready状态
-func PodReadyView(pod v1.Pod) string {
+// podReadyView 友好显示POD的Ready状态
+func podReadyView(pod v1.Pod) string {
 	for _, condition := range pod.Status.Conditions {
 		if condition.Type == v1.PodReady && condition.Status == v1.ConditionTrue {
 			return "✔️"

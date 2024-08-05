@@ -30,24 +30,14 @@ func (m *containerModel) updateData(force bool) {
 	// 获取 container
 	rows := make([]table.Row, 0, len(pod.Status.ContainerStatuses))
 	for _, container := range pod.Status.ContainerStatuses {
-		rows = append(rows, table.Row{
-			container.Name,
-			container.Image,
-			getContainerState(container),
-			getBoolString(container.Ready),
-		})
+		rows = append(rows, TemplateRender(comm.ConfigTemplateContainer, container))
 	}
 	ui.TableRowsSort(rows, comm.ShowKubeteaConfig().Sort.Container)
 
 	// 展示 init container
 	initRows := make([]table.Row, 0, len(pod.Status.InitContainerStatuses))
 	for _, container := range pod.Status.InitContainerStatuses {
-		initRows = append(initRows, table.Row{
-			container.Name,
-			container.Image,
-			getContainerState(container),
-			getBoolString(container.Ready),
-		})
+		initRows = append(initRows, TemplateRender(comm.ConfigTemplateContainer, container))
 	}
 	ui.TableRowsSort(initRows, comm.ShowKubeteaConfig().Sort.Container)
 	rows = append(rows, initRows...)
@@ -68,12 +58,7 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 	}
 	m.Abstract.Model = m
 
-	m.Table = ui.NewTableWithData([]table.Column{
-		{Title: "容器名称", Width: 0},
-		{Title: "镜像地址", Width: 0},
-		{Title: "状态", Width: 4},
-		{Title: "就绪", Width: 4},
-	}, nil)
+	m.Table = ui.NewTableWithData(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateContainer), nil)
 	m.updateData(false)
 
 	m.UpdateEvent = func(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -134,16 +119,8 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 
 }
 
-// 获取字符串输出的Bool值
-func getBoolString(val bool) string {
-	if val {
-		return "✔️"
-	}
-	return "❌️"
-}
-
 // 获取容器的状态名称
-func getContainerState(status v1.ContainerStatus) string {
+func containerStateView(status v1.ContainerStatus) string {
 	if status.State.Waiting != nil {
 		return "♾️"
 	} else if status.State.Terminated != nil {

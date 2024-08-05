@@ -8,6 +8,7 @@ import (
 	"github.com/flyhope/kubetea/k8s"
 	"github.com/flyhope/kubetea/ui"
 	"github.com/sirupsen/logrus"
+	v1 "k8s.io/api/core/v1"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -17,6 +18,13 @@ import (
 type clusterModel struct {
 	ui.Abstract
 	*ui.TableFilter
+}
+
+// 用于显示的集群每行数据
+type clusterRow struct {
+	Name        string
+	TotalNumber string
+	Pods        []v1.Pod
 }
 
 // 更新数据
@@ -71,10 +79,7 @@ func ShowCluster() (tea.Model, error) {
 	m := &clusterModel{
 		TableFilter: ui.NewTableFilter(),
 	}
-	m.TableFilter.Table = ui.NewTableWithData([]table.Column{
-		{Title: "集群", Width: 0},
-		{Title: "数量", Width: 10},
-	}, nil)
+	m.TableFilter.Table = ui.NewTableWithData(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateCluster), nil)
 	m.updateData(false)
 
 	m.UpdateEvent = func(msg tea.Msg) (tea.Model, tea.Cmd) {

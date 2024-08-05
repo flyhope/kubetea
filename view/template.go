@@ -11,14 +11,24 @@ import (
 
 // 模板函数定义
 var defaultTemplate = template.New("kubetea").Funcs(template.FuncMap{
-	"PodPhaseView": PodPhaseView,
-	"PodReadyView": PodReadyView,
-	"FormatTime":   FormatTime,
+	"PodPhaseView":       podPhaseView,
+	"PodReadyView":       podReadyView,
+	"ContainerStateView": containerStateView,
+	"BoolView":           boolView,
+	"FormatTime":         formatTime,
 })
 
-// FormatTime 格式化模板时间
-func FormatTime(t time.Time) string {
+// formatTime 格式化模板时间
+func formatTime(t time.Time) string {
 	return t.Format(time.DateTime)
+}
+
+// 获取字符串输出的Bool值
+func boolView(val bool) string {
+	if val {
+		return "✔️"
+	}
+	return "❌️"
 }
 
 // NewTmplParse 创建模板
