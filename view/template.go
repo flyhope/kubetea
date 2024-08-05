@@ -11,11 +11,12 @@ import (
 
 // 模板函数定义
 var defaultTemplate = template.New("kubetea").Funcs(template.FuncMap{
-	"PodPhaseView":       podPhaseView,
-	"PodReadyView":       podReadyView,
-	"ContainerStateView": containerStateView,
-	"BoolView":           boolView,
-	"FormatTime":         formatTime,
+	"CountByPodLabelKeyValue": countByPodLabelKeyValue,
+	"PodPhaseView":            podPhaseView,
+	"PodReadyView":            podReadyView,
+	"ContainerStateView":      containerStateView,
+	"BoolView":                boolView,
+	"FormatTime":              formatTime,
 })
 
 // formatTime 格式化模板时间

@@ -28,10 +28,12 @@ sort:
 template:
   cluster:
     column:
-      - { title: "集群", width: 0 },
-      - { title: "数量", width: 10 },
+      - { title: "集群", width: 0 }
+      - { title: "数量", width: 10 }
     body:
-
+      # first cloume must be .Name
+      - "{{ .Name }}"
+      - "{{ len .Pods }}"
   pod:
     column:
       - { title: "名称", width: 0 }
@@ -53,6 +55,7 @@ template:
       - { title: "状态", width: 4 }
       - { title: "就绪", width: 4 }
     body:
+      # first cloume must be .Name
       - "{{ .Name }}"
       - "{{ .Image }}"
       - "{{ ContainerStateView . }}"
