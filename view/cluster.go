@@ -8,9 +8,9 @@ import (
 	"github.com/flyhope/kubetea/k8s"
 	"github.com/flyhope/kubetea/ui"
 	"github.com/sirupsen/logrus"
+	v1 "k8s.io/api/core/v1"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"time"
 )
 
@@ -19,10 +19,16 @@ type clusterModel struct {
 	*ui.TableFilter
 }
 
+// 用于显示的集群每行数据
+type clusterRow struct {
+	Name    string
+	Pods    []*v1.Pod
+	SortNum int
+}
+
 // 更新数据
 func (c *clusterModel) updateData(force bool) {
 	config := comm.ShowKubeteaConfig()
-	groupLabels := make(map[string]int)
 
 	pods, err := k8s.PodCache().ShowList(force)
 	if err != nil {
@@ -30,7 +36,7 @@ func (c *clusterModel) updateData(force bool) {
 	}
 
 	// 获取要展示的label
-	labelTotal := make(map[string]int)
+	clusterRows := make(map[string]*clusterRow, len(config.ClusterFilters))
 	for _, pod := range pods.Items {
 		groupLabelValue := pod.Labels[config.ClusterByLabel]
 		for idx, filter := range config.ClusterFilters {
@@ -41,24 +47,31 @@ func (c *clusterModel) updateData(force bool) {
 			}
 
 			if ok {
-				groupLabels[groupLabelValue] = idx
-				labelTotal[groupLabelValue]++
+				row := clusterRows[groupLabelValue]
+				if row == nil {
+					row = &clusterRow{
+						Name:    groupLabelValue,
+						SortNum: idx,
+					}
+					clusterRows[groupLabelValue] = row
+				}
+				row.Pods = append(row.Pods, &pod)
 				break
 			}
 		}
 	}
 
 	// 拼接UI列表数据
-	rows := make([]table.Row, 0, len(groupLabels))
-	for label := range groupLabels {
-		rows = append(rows, table.Row{label, strconv.Itoa(labelTotal[label])})
+	rows := make([]table.Row, 0, len(clusterRows))
+	for _, row := range clusterRows {
+		rows = append(rows, TemplateRender(comm.ConfigTemplateCluster, row))
 	}
 
+	// 排序
 	sort.Slice(rows, func(i, j int) bool {
-		if groupLabels[rows[i][0]] != groupLabels[rows[j][0]] {
-			return groupLabels[rows[i][0]] < groupLabels[rows[j][0]]
+		if clusterRows[rows[i][0]].SortNum != clusterRows[rows[j][0]].SortNum {
+			return clusterRows[rows[i][0]].SortNum < clusterRows[rows[j][0]].SortNum
 		}
-
 		return rows[i][0] < rows[j][0]
 	})
 	c.Table.SetRows(rows)
@@ -71,10 +84,7 @@ func ShowCluster() (tea.Model, error) {
 	m := &clusterModel{
 		TableFilter: ui.NewTableFilter(),
 	}
-	m.TableFilter.Table = ui.NewTableWithData([]table.Column{
-		{Title: "集群", Width: 0},
-		{Title: "数量", Width: 10},
-	}, nil)
+	m.TableFilter.Table = ui.NewTableWithData(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateCluster), nil)
 	m.updateData(false)
 
 	m.UpdateEvent = func(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -103,4 +113,14 @@ func ShowCluster() (tea.Model, error) {
 		return nil, nil
 	}
 	return m, nil
+}
+
+// countByPodLabelKeyValue 根据Pod的Label标签，统计符合条件的POD的数量
+func countByPodLabelKeyValue(pods []*v1.Pod, key, value string) (result int) {
+	for _, pod := range pods {
+		if pod.Labels[key] == value {
+			result++
+		}
+	}
+	return result
 }
