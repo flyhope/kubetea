@@ -28,6 +28,14 @@ func (t *Table) SetRows(rows []table.Row) {
 	t.FilterRows(t.filterValue)
 }
 
+// SetColumns 设置表格字段
+func (t *Table) SetColumns(c []table.Column) {
+	t.originColumns = c
+	if len(t.originRows) > 0 {
+		t.AutoColSize()
+	}
+}
+
 // FilterRows 根据输入的筛选条件，筛选数据
 func (t *Table) FilterRows(value string) {
 	t.filterValue = value
@@ -85,8 +93,8 @@ func (t *Table) AutoColSize() {
 	t.Model.SetColumns(cols)
 }
 
-// NewTableWithData 带着数据和默认样式创建Table
-func NewTableWithData(columns []table.Column, rows []table.Row) Table {
+// NewTable 带着数据和默认样式创建Table
+func NewTable() Table {
 	model := table.New()
 
 	s := table.DefaultStyles()
@@ -105,12 +113,7 @@ func NewTableWithData(columns []table.Column, rows []table.Row) Table {
 	model.Focus()
 
 	t := &Table{
-		Model:         model,
-		originColumns: columns,
-	}
-
-	if len(rows) > 0 {
-		t.SetRows(rows)
+		Model: model,
 	}
 
 	t.AutoResize(WindowSize())

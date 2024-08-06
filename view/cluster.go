@@ -82,9 +82,9 @@ func (c *clusterModel) updateData(force bool) {
 func ShowCluster() (tea.Model, error) {
 	// 渲染UI
 	m := &clusterModel{
-		TableFilter: ui.NewTableFilter(),
+		TableFilter: ui.FetchTableFilter(),
 	}
-	m.TableFilter.Table = ui.NewTableWithData(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateCluster), nil)
+	m.TableFilter.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateCluster))
 	m.updateData(false)
 
 	m.UpdateEvent = func(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -101,8 +101,7 @@ func ShowCluster() (tea.Model, error) {
 				if err != nil {
 					logrus.Fatal(err)
 				}
-
-				return ui.ViewModel(model)
+				return model, nil
 			case "f5", "ctrl+r":
 				m.updateData(true)
 			}

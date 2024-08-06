@@ -14,19 +14,42 @@ type TableFilter struct {
 	SubDescs    []string
 }
 
+// 上一次的表格组件（必需用上一次的克隆一个，否则新表格设置宽高屏幕会闪）
+var lastTableFilter = newTableFilter()
+
+// Reset 重置表格数据
+func (m *TableFilter) Reset() {
+	m.Input.SetValue("")
+	m.Table.SetRows(nil)
+	m.Table.SetColumns(nil)
+	m.SubDescs = nil
+	m.UpdateEvent = nil
+}
+
+// FetchTableFilter 创建一个新的可筛选表格
+func FetchTableFilter() *TableFilter {
+	tableCloneEntity := *lastTableFilter
+	tableClone := &tableCloneEntity
+	tableClone.Reset()
+	lastTableFilter = tableClone
+	return tableClone
+}
+
 // Init 初始方法
 func (m *TableFilter) Init() tea.Cmd {
 	return nil
 }
 
-// NewTableFilter 创建一个新的可筛选表格
-func NewTableFilter() *TableFilter {
+// 创建一个新的TableFilter
+func newTableFilter() *TableFilter {
 	m := &TableFilter{}
 
 	// 输入框
 	m.Input = textinput.New()
 	m.Input.Placeholder = "Press / for search"
 	m.Input.CharLimit = 156
+
+	m.Table = NewTable()
 
 	return m
 }
