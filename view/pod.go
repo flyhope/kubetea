@@ -54,16 +54,15 @@ func (c *podModel) updateData(force bool) {
 
 // ShowPod 获取POD列表
 func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
-
 	// 渲染UI
 	m := &podModel{
 		Abstract:    ui.Abstract{LastModel: lastModel},
-		TableFilter: ui.NewTableFilter(),
+		TableFilter: ui.FetchTableFilter(),
 		app:         app,
 	}
 	m.Abstract.Model = m
 
-	m.TableFilter.Table = ui.NewTableWithData(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplatePod), nil)
+	m.TableFilter.Table.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplatePod))
 	m.TableFilter.Focus()
 	m.updateData(false)
 
@@ -87,7 +86,7 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 				if err != nil {
 					logrus.Fatal(err)
 				}
-				return ui.ViewModel(model)
+				return model, nil
 
 			// 查看JSON数据
 			case "i":

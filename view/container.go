@@ -53,12 +53,12 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 	// 渲染UI
 	m := &containerModel{
 		Abstract:    ui.Abstract{LastModel: lastModel},
-		TableFilter: ui.NewTableFilter(),
+		TableFilter: ui.FetchTableFilter(),
 		PodName:     podName,
 	}
 	m.Abstract.Model = m
 
-	m.Table = ui.NewTableWithData(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateContainer), nil)
+	m.TableFilter.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateContainer))
 	m.updateData(false)
 
 	m.UpdateEvent = func(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -93,7 +93,7 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 					if err != nil {
 						logrus.Fatal(err)
 					}
-					return ui.ViewModel(ui.PageViewJson(pod.Name, pod, m))
+					return ui.PageViewJson(pod.Name, pod, m), nil
 				// 查看日志
 				case "l":
 					containerLog := k8s.ContainerLog(m.PodName, row[0])

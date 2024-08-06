@@ -68,7 +68,7 @@ func (m *Abstract) GoBack() (tea.Model, tea.Cmd) {
 		return m.Model, tea.Quit
 	}
 
-	model, cmd := ViewModel(m.LastModel)
+	model := m.LastModel
 	model.Update(comm.MsgUIBack(true))
-	return model, cmd
+	return model, nil
 }
