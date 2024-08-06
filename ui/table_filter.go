@@ -106,7 +106,7 @@ func (m *TableFilter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Table操作指令
 			if m.Table.Focused() {
 				switch msgType.String() {
-				case "j", "down", "k", "up":
+				case "j", "down", "k", "up", "b", "pgup", "f", "pgdown", "u", "ctrl+u", "d", "ctrl+d", "g", "home", "G", "end":
 					m.Table.Model, _ = m.Table.Model.Update(msg)
 				case "/":
 					m.Input.Focus()
