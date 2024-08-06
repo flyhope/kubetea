@@ -21,14 +21,25 @@
 kubetea
 ```
 
-key map
+key map (select line for table or page)
+
+| Key        | Description           | 
+|------------|-----------------------|
+| j,↓        | table row select down |  
+| k,↑        | table row select up   |      
+| PageDown,f | page up               |
+| PageUp,b   | page down             |
+| d,ctrl+d   | page half down        |
+| u,ctrl+u   | page half up          |
+| G,end      | go to end             |
+| g,home     | go to home            |
+
+key map (table)
 
 | Key    | Description           | cluster  | pod | container |
 |--------|-----------------------|:--------:|:---:|:---------:|
 | esc    | exit or go back       |    ✅️    | ✅️  |    ✅️     |
 | ctrl+c | exit                  |    ✅️    | ✅️  |    ✅️     |
-| j,↓    | table row select down |    ✅️    | ✅️  |    ✅️     |
-| k,↑    | table row select up   |    ✅️    | ✅️  |    ✅️     |
 | /      | search input focus    |    ✅️    | ✅️  |    ✅️     |
 | i      | pod infomation        |    ❌️    | ✅️  |    ✅️     |
 | s      | shell                 |    ❌️    | ❌️  |    ✅️     |
@@ -38,14 +49,6 @@ page key map (exmaple: pod infomation)
 | Key        | Description              |
 |------------|--------------------------|
 | /          | search input focus       |
-| j,↓        | down                     | 
-| k,↑        | up                       | 
-| PageDown,f | page up                  | 
-| PageUp,b   | page down                | 
-| d,ctrl+d   | page half down           |
-| u,ctrl+u   | page half up             |
-| G,end      | go to end                |
-| g,home     | go to home               |
 | esc        | search input blur        |
 | enter      | search mode              |
 | n          | next match (search mode) |
