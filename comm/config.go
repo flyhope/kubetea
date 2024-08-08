@@ -74,6 +74,8 @@ type KubeteaConfigLog struct {
 }
 
 type KubeteaConfigSort struct {
+	Cluster   int     `yaml:"cluster"`
+	Pod       int     `yaml:"pod"`
 	Container SortMap `yaml:"container"`
 }
 type KubeteaTemplateTable struct {

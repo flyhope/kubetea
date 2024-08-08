@@ -8,12 +8,6 @@ import (
 	"os"
 )
 
-var (
-	Version   string
-	BuildTime string
-	GitCommit string
-)
-
 func main() {
 	// 日志配置
 	comm.LogSetStdout()
