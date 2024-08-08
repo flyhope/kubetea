@@ -95,7 +95,8 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 					containerLog := k8s.ContainerLog(m.PodName, row[0])
 					podLogs, err := containerLog.Stream(comm.Context.Context)
 					if err != nil {
-						logrus.Fatalf("Error getting logs: %s\n", err.Error())
+						logrus.Warnln("Error getting logs: %s\n", err.Error())
+						break
 					}
 					defer podLogs.Close()
 
