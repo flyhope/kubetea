@@ -88,6 +88,9 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 				// 打开容列表
 				case "enter":
 					row := m.Table.SelectedRow()
+					if len(row) == 0 {
+						break
+					}
 					model, err := ShowContainer(row[0], m)
 					if err != nil {
 						logrus.Fatal(err)

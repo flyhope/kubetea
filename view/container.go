@@ -79,6 +79,9 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 					return m.GoBack()
 				// 进入容器Shell
 				case "enter", "s":
+					if len(row) == 0 {
+						break
+					}
 					return m, ui.NewCmd(k8s.ContainerShell(m.PodName, row[0]))
 				// 查看JSON数据
 				case "i":
