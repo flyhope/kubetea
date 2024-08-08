@@ -90,6 +90,10 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 						logrus.Fatal(err)
 					}
 					return ui.PageViewJson(pod.Name, pod, m), nil
+				// 查看 Describe
+				case "e":
+					return ui.NewCliPause(m, "kubectl", "describe", "pod", m.PodName)
+
 				// 查看日志
 				case "l":
 					containerLog := k8s.ContainerLog(m.PodName, row[0])
