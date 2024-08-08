@@ -20,6 +20,9 @@ var lastTableFilter = newTableFilter()
 // Reset 重置表格数据
 func (m *TableFilter) Reset() {
 	m.Input.SetValue("")
+	if len(m.Table.Rows()) > 0 {
+		m.Table.SetCursor(0)
+	}
 	m.Table.SetRows(nil)
 	m.Table.SetColumns(nil)
 	m.SubDescs = nil
