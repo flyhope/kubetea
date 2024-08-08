@@ -36,13 +36,14 @@ key map (select line for table or page)
 
 key map (table)
 
-| Key    | Description           | cluster  | pod | container |
-|--------|-----------------------|:--------:|:---:|:---------:|
-| esc    | exit or go back       |    ✅️    | ✅️  |    ✅️     |
-| ctrl+c | exit                  |    ✅️    | ✅️  |    ✅️     |
-| /      | search input focus    |    ✅️    | ✅️  |    ✅️     |
-| i      | pod infomation        |    ❌️    | ✅️  |    ✅️     |
-| s      | shell                 |    ❌️    | ❌️  |    ✅️     |
+| Key    | Description        | cluster  | pod | container |
+|--------|--------------------|:--------:|:---:|:---------:|
+| esc    | exit or go back    |    ✅️    | ✅️  |    ✅️     |
+| ctrl+c | exit               |    ✅️    | ✅️  |    ✅️     |
+| /      | search input focus |    ✅️    | ✅️  |    ✅️     |
+| i      | pod infomation     |    ❌️    | ✅️  |    ✅️     |
+| e      | pod describe       |    ❌️    | ✅️  |    ✅️     |
+| s      | shell              |    ❌️    | ❌️  |    ✅️     |
 
 page key map (exmaple: pod infomation)
 

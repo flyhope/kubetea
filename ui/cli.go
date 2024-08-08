@@ -3,6 +3,7 @@ package ui
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"os/exec"
+	"strings"
 )
 
 type CliMsg struct {
@@ -14,6 +15,16 @@ func NewCli(command string, args ...string) tea.Cmd {
 	return NewCliWithCallback(func(err error) tea.Msg {
 		return CliMsg{Err: err}
 	}, command, args...)
+}
+
+// NewCliPause 执行一个Cli命令，并暂停，适用于命令执行后马上自动退出的情况
+func NewCliPause(currentModel tea.Model, command string, args ...string) (tea.Model, tea.Cmd) {
+	cliCmd := NewCliWithCallback(func(err error) tea.Msg {
+		return CliMsg{Err: err}
+	}, command, args...)
+	tips := command + " " + strings.Join(args, " ")
+	pauseModel := NewPause(currentModel, tips)
+	return pauseModel, tea.Sequence(cliCmd, tea.ExitAltScreen)
 }
 
 // NewCliWithCallback 执行一个Cli命令，并手动设置Callback函数

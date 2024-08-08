@@ -107,9 +107,8 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 					return ui.ViewModel(ui.PageViewJson(row[0], pod, m.TableFilter))
 
 				// 查看 Describe
-				case "d":
-					return m, ui.NewCli("kubectl", "describe", "pod", m.Table.SelectedRow()[0])
-
+				case "e":
+					return ui.NewCliPause(m, "kubectl", "describe", "pod", m.Table.SelectedRow()[0])
 				}
 			}
 
