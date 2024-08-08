@@ -20,6 +20,7 @@ var lastTableFilter = newTableFilter()
 // Reset 重置表格数据
 func (m *TableFilter) Reset() {
 	m.Input.SetValue("")
+
 	if len(m.Table.Rows()) > 0 {
 		m.Table.SetCursor(0)
 	}
@@ -104,6 +105,11 @@ func (m *TableFilter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.Input, _ = m.Input.Update(msg)
 				value := m.Input.Value()
 				m.Table.FilterRows(value)
+				switch msgType.String() {
+				case "enter":
+					m.Table.Focus()
+					m.Input.Blur()
+				}
 			}
 
 			// Table操作指令

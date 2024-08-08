@@ -70,16 +70,9 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 			case "alt+left", "ctrl+left":
 				return m.GoBack()
 			}
-		// 数据更新事件
-		case comm.MsgPodCache, comm.MsgUIBack:
-			m.updateData(false)
-		}
 
-		// 仅在未输入状态下，响应按键事件
-		if !m.TableFilter.Input.Focused() {
-			switch msgType := msg.(type) {
-			// 按键事件
-			case tea.KeyMsg:
+			// 仅在未输入状态下，响应按键事件
+			if !m.TableFilter.Input.Focused() {
 				switch msgType.String() {
 				// 返回上一级
 				case "esc":
@@ -111,7 +104,11 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 					return ui.PageViewContent(m.PodName, buf.String(), m), nil
 				}
 			}
+		// 数据更新事件
+		case comm.MsgPodCache, comm.MsgUIBack:
+			m.updateData(false)
 		}
+
 		return nil, nil
 	}
 
