@@ -22,7 +22,7 @@ func NewCmdPause(currentModel tea.Model, cmd *exec.Cmd) (tea.Model, tea.Cmd) {
 	cliCmd := NewCmdWithCallback(cmd, func(err error) tea.Msg {
 		return CliMsg{Err: err}
 	})
-	tips := cmd.Path + " " + strings.Join(cmd.Args, " ")
+	tips := strings.Join(cmd.Args, " ")
 	pauseModel := NewPause(currentModel, tips)
 	return pauseModel, tea.Sequence(cliCmd, tea.ExitAltScreen)
 }
