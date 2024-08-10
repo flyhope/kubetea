@@ -108,7 +108,7 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 
 				// 查看 Describe
 				case "e":
-					return ui.NewCliPause(m, "kubectl", "describe", "pod", m.Table.SelectedRow()[0])
+					return ui.NewCmdPause(m, k8s.KubeCmdArgs("describe", "pod", m.Table.SelectedRow()[0]))
 				}
 			}
 

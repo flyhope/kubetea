@@ -23,10 +23,24 @@ var Client = sync.OnceValue(func() *kubernetes.Clientset {
 
 // KubeCmd 生成kubectl基础命令，带有配置文件等通用参数
 func KubeCmd() *exec.Cmd {
-	cmd := exec.Command("kubectl",
-		"--kubeconfig", ShowKubeConfigPath(),
-		"--namespace", ShowNamespace(),
-		"--context", ShowContext(),
-	)
+	var args []string
+	if kubeconfig := ShowKubeConfigPath(); kubeconfig != "" {
+		args = append(args, "--kubeconfig", kubeconfig)
+	}
+	if namespace := ShowNamespace(); namespace != "" {
+		args = append(args, "--namespace", namespace)
+	}
+	if kubeContext := ShowContext(); kubeContext != "" {
+		args = append(args, "--context", kubeContext)
+	}
+
+	cmd := exec.Command("kubectl", args...)
+	return cmd
+}
+
+// KubeCmdArgs 生成带指定参数的kubectl命令
+func KubeCmdArgs(args ...string) *exec.Cmd {
+	cmd := KubeCmd()
+	cmd.Args = append(cmd.Args, args...)
 	return cmd
 }

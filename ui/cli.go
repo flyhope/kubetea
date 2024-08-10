@@ -17,12 +17,12 @@ func NewCli(command string, args ...string) tea.Cmd {
 	}, command, args...)
 }
 
-// NewCliPause 执行一个Cli命令，并暂停，适用于命令执行后马上自动退出的情况
-func NewCliPause(currentModel tea.Model, command string, args ...string) (tea.Model, tea.Cmd) {
-	cliCmd := NewCliWithCallback(func(err error) tea.Msg {
+// NewCmdPause 执行一个cmd命令，并暂停，适用于命令执行后马上自动退出的情况
+func NewCmdPause(currentModel tea.Model, cmd *exec.Cmd) (tea.Model, tea.Cmd) {
+	cliCmd := NewCmdWithCallback(cmd, func(err error) tea.Msg {
 		return CliMsg{Err: err}
-	}, command, args...)
-	tips := command + " " + strings.Join(args, " ")
+	})
+	tips := cmd.Path + " " + strings.Join(cmd.Args, " ")
 	pauseModel := NewPause(currentModel, tips)
 	return pauseModel, tea.Sequence(cliCmd, tea.ExitAltScreen)
 }
