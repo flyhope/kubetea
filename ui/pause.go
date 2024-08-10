@@ -33,7 +33,10 @@ func (m *pause) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *pause) View() string {
-	result := "\n" + SubtleStyle.Render(m.tips)
+	size := WindowSize()
+	tipsStyle := SubtleStyle.Width(size.Width)
+
+	result := "\n" + tipsStyle.Render(m.tips)
 	result += "\npress [enter] to reutrn kubetea"
 	return result
 }

@@ -92,7 +92,7 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 					return ui.PageViewJson(pod.Name, pod, m), nil
 				// 查看 Describe
 				case "e":
-					return ui.NewCliPause(m, "kubectl", "describe", "pod", m.PodName)
+					return ui.NewCmdPause(m, k8s.KubeCmdArgs("describe", "pod", m.Table.SelectedRow()[0]))
 
 				// 查看日志
 				case "l":
