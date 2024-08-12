@@ -70,22 +70,18 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 			case "alt+left", "ctrl+left":
 				return m.GoBack()
 			}
-		// 数据更新事件
-		case comm.MsgPodCache, comm.MsgUIBack:
-			m.updateData(false)
-		}
 
-		// 仅在未输入状态下，响应按键事件
-		if !m.TableFilter.Input.Focused() {
-			switch msgType := msg.(type) {
-			// 按键事件
-			case tea.KeyMsg:
+			// 仅在未输入状态下，响应按键事件
+			if !m.TableFilter.Input.Focused() {
 				switch msgType.String() {
 				// 返回上一级
 				case "esc":
 					return m.GoBack()
 				// 进入容器Shell
 				case "enter", "s":
+					if len(row) == 0 {
+						break
+					}
 					return m, ui.NewCmd(k8s.ContainerShell(m.PodName, row[0]))
 				// 查看JSON数据
 				case "i":
@@ -94,12 +90,17 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 						logrus.Fatal(err)
 					}
 					return ui.PageViewJson(pod.Name, pod, m), nil
+				// 查看 Describe
+				case "e":
+					return ui.NewCmdPause(m, k8s.KubeCmdArgs("describe", "pod", m.Table.SelectedRow()[0]))
+
 				// 查看日志
 				case "l":
 					containerLog := k8s.ContainerLog(m.PodName, row[0])
 					podLogs, err := containerLog.Stream(comm.Context.Context)
 					if err != nil {
-						logrus.Fatalf("Error getting logs: %s\n", err.Error())
+						logrus.Warnln("Error getting logs: %s\n", err.Error())
+						break
 					}
 					defer podLogs.Close()
 
@@ -111,7 +112,11 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 					return ui.PageViewContent(m.PodName, buf.String(), m), nil
 				}
 			}
+		// 数据更新事件
+		case comm.MsgPodCache, comm.MsgUIBack:
+			m.updateData(false)
 		}
+
 		return nil, nil
 	}
 

@@ -65,7 +65,7 @@ func ShowNamespace() string {
 	currentContext := ShowContext()
 	contextDetails := config.Contexts[currentContext]
 	if contextDetails == nil {
-		logrus.Fatal("\"current context not found in kubeconfig")
+		logrus.Fatal("current context not found in kubeconfig")
 		return ""
 	}
 	return contextDetails.Namespace

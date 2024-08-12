@@ -92,18 +92,24 @@ func ShowCluster() (tea.Model, error) {
 		// 按键事件
 		case tea.KeyMsg:
 			switch msgType.String() {
-			case "enter":
-				row := m.Table.SelectedRow()
-				if len(row) == 0 {
-					break
-				}
-				model, err := ShowPod(row[0], m)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-				return model, nil
 			case "f5", "ctrl+r":
 				m.updateData(true)
+			}
+
+			// 仅在未输入状态下，响应按键事件
+			if !m.TableFilter.Input.Focused() {
+				switch msgType.String() {
+				case "enter":
+					row := m.Table.SelectedRow()
+					if len(row) == 0 {
+						break
+					}
+					model, err := ShowPod(row[0], m)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+					return model, nil
+				}
 			}
 		case comm.MsgPodCache, comm.MsgUIBack:
 			m.updateData(false)

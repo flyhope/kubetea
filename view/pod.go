@@ -71,42 +71,51 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 		// 按键事件
 		case tea.KeyMsg:
 			switch msgType.String() {
-			// 返回上一级
-			case "esc":
-				if !m.TableFilter.Input.Focused() {
-					return m.GoBack()
-				}
 			case "alt+left", "ctrl+left":
 				return m.GoBack()
-
-			// 打开容列表
-			case "enter":
-				row := m.Table.SelectedRow()
-				model, err := ShowContainer(row[0], m)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-				return model, nil
-
-			// 查看JSON数据
-			case "i":
-				row := m.Table.SelectedRow()
-				pod, _, err := k8s.PodCache().Show(row[0], false)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-				return ui.ViewModel(ui.PageViewJson(row[0], pod, m.TableFilter))
-
-			// 查看 Describe
-			case "d":
-				return m, ui.NewCli("kubectl", "describe", "pod", m.Table.SelectedRow()[0])
-
 			case "f5", "ctrl+r":
 				m.updateData(true)
 			}
+
+			// 仅在未输入状态下，响应按键事件
+			if !m.TableFilter.Input.Focused() {
+				switch msgType.String() {
+
+				// 返回上一级
+				case "esc":
+					return m.GoBack()
+
+				// 打开容列表
+				case "enter":
+					row := m.Table.SelectedRow()
+					if len(row) == 0 {
+						break
+					}
+					model, err := ShowContainer(row[0], m)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+					return model, nil
+
+				// 查看JSON数据
+				case "i":
+					row := m.Table.SelectedRow()
+					pod, _, err := k8s.PodCache().Show(row[0], false)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+					return ui.ViewModel(ui.PageViewJson(row[0], pod, m.TableFilter))
+
+				// 查看 Describe
+				case "e":
+					return ui.NewCmdPause(m, k8s.KubeCmdArgs("describe", "pod", m.Table.SelectedRow()[0]))
+				}
+			}
+
 		case comm.MsgPodCache, comm.MsgUIBack:
 			m.updateData(false)
 		}
+
 		return nil, nil
 	}
 
