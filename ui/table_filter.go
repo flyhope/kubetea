@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 // TableFilter 带有过滤功能的Table
@@ -115,8 +117,18 @@ func (m *TableFilter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Table操作指令
 			if m.Table.Focused() {
 				switch msgType.String() {
+				// 选择控制按键
 				case "j", "down", "k", "up", "b", "pgup", "f", "pgdown", "u", "ctrl+u", "d", "ctrl+d", "g", "home", "G", "end":
 					m.Table.Model, _ = m.Table.Model.Update(msg)
+				// 排序按钮
+				case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
+					sortIndex, errAtoi := strconv.Atoi(msgType.String())
+					if errAtoi != nil {
+						logrus.Fatal(errAtoi)
+					}
+					m.Table.SetSortIndex(sortIndex)
+
+				// 搜索按钮
 				case "/":
 					m.Input.Focus()
 					m.Table.Model.Blur()

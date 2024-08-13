@@ -33,6 +33,8 @@ key map (select line for table or page)
 | u,ctrl+u   | page half up          |
 | G,end      | go to end             |
 | g,home     | go to home            |
+| 1-9        | sort by column index  |
+| 0          | reset sort            |
 
 key map (table)
 
