@@ -21,7 +21,7 @@ sort:
   # default sort column index (first is 1, not 0)
   cluster: 1
   # default sort column index (first is 1, not 0)
-  pod: 2
+  pod: 1
   # container sort by name, number small is front, same number sort by name
   # but, must normal container first, initContainer last
   container:

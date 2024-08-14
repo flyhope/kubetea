@@ -34,7 +34,7 @@ key map (select line for table or page)
 | G,end      | go to end             |
 | g,home     | go to home            |
 | 1-9        | sort by column index  |
-| 0          | reset sort            |
+| 0          | reset default sort    |
 
 key map (table)
 
@@ -69,6 +69,9 @@ kubetea $ipOrPodname
 ## Feature
 
 - [x] support krs-auth
+- [x] support kubeconfig
+- [x] support context
+- [x] support namespace
 
 ## Thanks
 

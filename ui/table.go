@@ -70,7 +70,7 @@ func (t *Table) SetSortIndex(index int) bool {
 	}
 
 	if comm.Abs(t.sortIndex) == index {
-		index = -index
+		index = -t.sortIndex
 	}
 
 	t.sortIndex = index

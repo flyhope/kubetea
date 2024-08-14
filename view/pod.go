@@ -63,6 +63,7 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 	m.Abstract.Model = m
 
 	m.TableFilter.Table.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplatePod))
+	m.Table.SetSortIndex(comm.ShowKubeteaConfig().Sort.Cluster)
 	m.TableFilter.Focus()
 	m.updateData(false)
 
