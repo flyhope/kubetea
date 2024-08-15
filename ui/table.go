@@ -7,6 +7,7 @@ import (
 	"github.com/flyhope/kubetea/comm"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 )
@@ -19,6 +20,7 @@ type Table struct {
 	filterValue   string         // 过滤字符表达式
 	originRows    []table.Row    // 存储原始未筛选的数据
 	originColumns []table.Column // 存储原始未筛选的表头
+	sortIndex     int            // 排序字段
 }
 
 // SetRows 设置完整数据
@@ -41,7 +43,10 @@ func (t *Table) FilterRows(value string) {
 	t.filterValue = value
 
 	if t.filterValue == "" {
-		t.Model.SetRows(t.originRows)
+		rows := make([]table.Row, len(t.originRows))
+		copy(rows, t.originRows)
+		t.sortRows(rows)
+		t.Model.SetRows(rows)
 	} else {
 		rows := make([]table.Row, 0, len(t.Model.Rows()))
 		for _, row := range t.originRows {
@@ -52,8 +57,62 @@ func (t *Table) FilterRows(value string) {
 				}
 			}
 		}
+
+		t.sortRows(rows)
 		t.Model.SetRows(rows)
 	}
+}
+
+// SetSortIndex 设置排序字段
+func (t *Table) SetSortIndex(index int) bool {
+	if index > len(t.originColumns) {
+		return false
+	}
+
+	if comm.Abs(t.sortIndex) == index {
+		index = -t.sortIndex
+	}
+
+	t.sortIndex = index
+	t.FilterRows(t.filterValue)
+	return true
+}
+
+// sortRows 对给定的值进行排序
+func (t *Table) sortRows(r []table.Row) {
+	if t.sortIndex == 0 || t.sortIndex > len(t.originColumns) {
+		return
+	}
+
+	var sortFunc func(i, j int) bool
+	sortIndex := comm.Abs(t.sortIndex) - 1
+	if t.sortIndex < 0 {
+		// 正序
+		sortFunc = func(i, j int) bool {
+			return tableRowsSortCompare(r, i, j, sortIndex)
+		}
+	} else {
+		// 倒序
+		sortFunc = func(i, j int) bool {
+			return !tableRowsSortCompare(r, i, j, sortIndex)
+		}
+	}
+	sort.Slice(r, sortFunc)
+}
+
+// 比较两个数的大小，i < j返回true
+func tableRowsSortCompare(data []table.Row, i, j, sortIndex int) bool {
+	iVal := data[i][sortIndex]
+	jVal := data[j][sortIndex]
+
+	// 尝试看看两个是不是数字，如果都是数字，则用数字比较
+	iInt, iErr := strconv.Atoi(iVal)
+	jInt, jErr := strconv.Atoi(jVal)
+	if iErr == nil && jErr == nil {
+		return iInt < jInt
+	}
+
+	return iVal < jVal
 }
 
 // AutoResize 自动设置Table大小

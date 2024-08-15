@@ -18,6 +18,10 @@ cluster_filters:
   - "*"
 
 sort:
+  # default sort column index (first column is 1, not 0, 0 is default sort)
+  cluster: 0
+  # default sort column index (first column is 1, not 0, 0 is default sort)
+  pod: 0
   # container sort by name, number small is front, same number sort by name
   # but, must normal container first, initContainer last
   container:

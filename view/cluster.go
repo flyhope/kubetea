@@ -74,6 +74,7 @@ func (c *clusterModel) updateData(force bool) {
 		}
 		return rows[i][0] < rows[j][0]
 	})
+
 	c.Table.SetRows(rows)
 	c.SubDescs = []string{fmt.Sprintf("数据更新时间：%s", k8s.PodCache().CreatedAt.Format(time.DateTime))}
 }
@@ -85,6 +86,7 @@ func ShowCluster() (tea.Model, error) {
 		TableFilter: ui.FetchTableFilter(),
 	}
 	m.TableFilter.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateCluster))
+	m.Table.SetSortIndex(comm.ShowKubeteaConfig().Sort.Cluster)
 	m.updateData(false)
 
 	m.UpdateEvent = func(msg tea.Msg) (tea.Model, tea.Cmd) {
