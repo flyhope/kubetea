@@ -1,11 +1,11 @@
 package view
 
 import (
-	"fmt"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/flyhope/kubetea/comm"
 	"github.com/flyhope/kubetea/k8s"
+	"github.com/flyhope/kubetea/lang"
 	"github.com/flyhope/kubetea/ui"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
@@ -47,8 +47,8 @@ func (c *podModel) updateData(force bool) {
 
 	c.Table.SetRows(rows)
 	c.SubDescs = []string{
-		fmt.Sprintf("合计：%d", len(rows)),
-		fmt.Sprintf("数据更新时间：%s", k8s.PodCache().CreatedAt.Format(time.DateTime)),
+		lang.Data(langTotalWithNumber, lang.Map{"number": len(rows)}),
+		lang.Data(langUpdateTime, lang.Map{"UpdateTime": k8s.PodCache().CreatedAt.Format(time.DateTime)}),
 	}
 }
 

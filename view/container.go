@@ -2,11 +2,11 @@ package view
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/flyhope/kubetea/comm"
 	"github.com/flyhope/kubetea/k8s"
+	"github.com/flyhope/kubetea/lang"
 	"github.com/flyhope/kubetea/ui"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -44,8 +44,8 @@ func (m *containerModel) updateData(force bool) {
 
 	m.Table.SetRows(rows)
 	m.SubDescs = []string{
-		fmt.Sprintf("合计：%d", len(rows)),
-		fmt.Sprintf("数据更新时间：%s", lastUpdate.Format(time.DateTime)),
+		lang.Data(langTotalWithNumber, lang.Map{"number": len(rows)}),
+		lang.Data(langUpdateTime, lang.Map{"UpdateTime": lastUpdate.Format(time.DateTime)}),
 	}
 }
 

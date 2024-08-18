@@ -86,3 +86,14 @@ func Txt(lc *i18n.LocalizeConfig) string {
 	}
 	return str
 }
+
+// Map lang data
+type Map map[string]any
+
+// Data Render text with i18n (not multi number)
+func Data(defaultMesage *i18n.Message, data Map) string {
+	return Txt(&i18n.LocalizeConfig{
+		DefaultMessage: defaultMesage,
+		TemplateData:   data,
+	})
+}
