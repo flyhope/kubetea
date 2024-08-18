@@ -1,0 +1,1 @@
+cluster.data_update_time: 'Data update time: {{.UpdateTime}}'

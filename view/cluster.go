@@ -1,12 +1,13 @@
 package view
 
 import (
-	"fmt"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/flyhope/kubetea/comm"
 	"github.com/flyhope/kubetea/k8s"
+	"github.com/flyhope/kubetea/lang"
 	"github.com/flyhope/kubetea/ui"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 	"path/filepath"
@@ -76,7 +77,16 @@ func (c *clusterModel) updateData(force bool) {
 	})
 
 	c.Table.SetRows(rows)
-	c.SubDescs = []string{fmt.Sprintf("数据更新时间：%s", k8s.PodCache().CreatedAt.Format(time.DateTime))}
+	//c.SubDescs = []string{fmt.Sprintf("数据更新时间：%s", k8s.PodCache().CreatedAt.Format(time.DateTime))}
+	c.SubDescs = []string{lang.Txt(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:    "cluster.data_update_time",
+			Other: "Data update time: {{.UpdateTime}}",
+		},
+		TemplateData: map[string]interface{}{
+			"UpdateTime": k8s.PodCache().CreatedAt.Format(time.DateTime),
+		},
+	})}
 }
 
 // ShowCluster 获取k8s Pod列表

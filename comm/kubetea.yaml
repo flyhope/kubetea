@@ -1,6 +1,9 @@
 # kubetea default config
 # auto write this file content to ~/.kubetea/config when first run
 
+# support auto / en / zh
+language: "auto"
+
 # pod cache when x second for update
 pod_cache_livetime_second: 5
 
