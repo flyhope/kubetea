@@ -35,19 +35,19 @@ sort:
 template:
   cluster:
     column:
-      - { title: "集群", width: 0 }
-      - { title: "数量", width: 10 }
+      - { title: '{{ txt "cluster" }}', width: 0 }
+      - { title: '{{ txt "number" }}', width: 10 }
     body:
       # first cloume must be .Name
       - "{{ .Name }}"
       - "{{ len .Pods }}"
   pod:
     column:
-      - { title: "名称", width: 0 }
-      - { title: "IP", width: 15 }
-      - { title: "状态", width: 4 }
-      - { title: "就绪", width: 4 }
-      - { title: "启动时间", width: 19 }
+      - { title: '{{ txt "name" }}', width: 0 }
+      - { title: 'IP', width: 15 }
+      - { title: '{{ txt "status" }}', width: 4 }
+      - { title: '{{ txt "ready" }}', width: 4 }
+      - { title: '{{ txt "createdAt" }}', width: 19 }
     body:
       # first cloume must be .Name
       - "{{ .Name }}"
@@ -57,10 +57,10 @@ template:
       - "{{ if .Status.StartTime }}{{ FormatTime .Status.StartTime.Time }}{{else}}-{{end}}"
   container:
     column:
-      - { title: "容器名称", width: 0 }
-      - { title: "镜像地址", width: 0 }
-      - { title: "状态", width: 4 }
-      - { title: "就绪", width: 4 }
+      - { title: '{{ txt "containerName" }}', width: 0 }
+      - { title: '{{ txt "imageUrl" }}', width: 0 }
+      - { title: '{{ txt "status" }}', width: 4 }
+      - { title: '{{ txt "createdAt" }}', width: 4 }
     body:
       # first cloume must be .Name
       - "{{ .Name }}"

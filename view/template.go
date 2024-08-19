@@ -3,6 +3,8 @@ package view
 import (
 	"bytes"
 	"github.com/flyhope/kubetea/comm"
+	"github.com/flyhope/kubetea/lang"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/sirupsen/logrus"
 	"html/template"
 	"sync"
@@ -17,6 +19,7 @@ var defaultTemplate = template.New("kubetea").Funcs(template.FuncMap{
 	"ContainerStateView":      containerStateView,
 	"BoolView":                boolView,
 	"FormatTime":              formatTime,
+	"txt":                     txt,
 })
 
 // formatTime 格式化模板时间
@@ -30,6 +33,13 @@ func boolView(val bool) string {
 		return "✔️"
 	}
 	return "❌️"
+}
+
+// txt get string by i18n
+func txt(name string) string {
+	return lang.Txt(&i18n.LocalizeConfig{
+		MessageID: name,
+	})
 }
 
 // NewTmplParse 创建模板

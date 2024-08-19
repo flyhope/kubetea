@@ -48,4 +48,5 @@ example: add a new language `fr`
 4. Run command merge the translated messages into the active message files.
    ```bash
    goi18n merge -format=yaml active.*.yaml translate.*.yaml
-5. ```
+   rm -f translate.*.yaml
+   ```
