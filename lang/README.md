@@ -24,14 +24,28 @@ example: add a new language `fr`
     export KUBETEA_LANG=fr
     goi18n extract -format=yaml -outdir="./lang"
     cd lang
+    goi18n merge -format=yaml view.en.yaml  active.en.yaml
     touch translate.$KUBETEA_LANG.yaml
     goi18n merge -format=yaml active.en.yaml translate.$KUBETEA_LANG.yaml
     ```
 3. translate your language file `translate.fr.yaml`.
 4. update merge your language file `active.fr.yaml`.
     ```bash
-   goi18n merge -format=yaml active.*.yaml translate.*.yaml
+   rename translate.$KUBETEA_LANG.yaml active.$KUBETEA_LANG.yaml
     ```
 
-### Update a existing language
+### Update existing language
 
+1. cd to this work directory.
+2. update different language translate file.
+    ```bash
+    goi18n extract -format=yaml -outdir="./lang"
+    cd lang
+    goi18n merge -format=yaml view.en.yaml  active.en.yaml
+    goi18n merge -format=yaml active.*.yaml
+    ```
+3. Translate all the messages in the `translate.*.yaml` files.
+4. Run command merge the translated messages into the active message files.
+   ```bash
+   goi18n merge -format=yaml active.*.yaml translate.*.yaml
+5. ```

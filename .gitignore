@@ -29,3 +29,5 @@ pkg/
 # bin
 __debug_bin*
 kubetea*
+
+lang/translate.*.yaml
