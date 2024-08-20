@@ -1,11 +1,11 @@
 package view
 
 import (
-	"fmt"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/flyhope/kubetea/comm"
 	"github.com/flyhope/kubetea/k8s"
+	"github.com/flyhope/kubetea/lang"
 	"github.com/flyhope/kubetea/ui"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
@@ -64,7 +64,7 @@ func (c *clusterModel) updateData(force bool) {
 	// 拼接UI列表数据
 	rows := make([]table.Row, 0, len(clusterRows))
 	for _, row := range clusterRows {
-		rows = append(rows, TemplateRender(comm.ConfigTemplateCluster, row))
+		rows = append(rows, TemplateRenderBody(comm.ConfigTemplateCluster, row))
 	}
 
 	// 排序
@@ -76,7 +76,7 @@ func (c *clusterModel) updateData(force bool) {
 	})
 
 	c.Table.SetRows(rows)
-	c.SubDescs = []string{fmt.Sprintf("数据更新时间：%s", k8s.PodCache().CreatedAt.Format(time.DateTime))}
+	c.SubDescs = []string{lang.Data(langUpdateTime, lang.Map{"UpdateTime": k8s.PodCache().CreatedAt.Format(time.DateTime)})}
 }
 
 // ShowCluster 获取k8s Pod列表
@@ -85,7 +85,7 @@ func ShowCluster() (tea.Model, error) {
 	m := &clusterModel{
 		TableFilter: ui.FetchTableFilter(),
 	}
-	m.TableFilter.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateCluster))
+	m.TableFilter.SetColumns(TemplateRenderColumn(comm.ConfigTemplateCluster))
 	m.Table.SetSortIndex(comm.ShowKubeteaConfig().Sort.Cluster)
 	m.updateData(false)
 

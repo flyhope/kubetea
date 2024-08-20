@@ -1,0 +1,8 @@
+cluster: 'cluster'
+number: 'number'
+name: 'name'
+status: 'status'
+ready: 'ready'
+createdAt: 'created at'
+containerName: 'container'
+imageUrl: 'image'

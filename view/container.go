@@ -2,11 +2,11 @@ package view
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/flyhope/kubetea/comm"
 	"github.com/flyhope/kubetea/k8s"
+	"github.com/flyhope/kubetea/lang"
 	"github.com/flyhope/kubetea/ui"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -30,22 +30,22 @@ func (m *containerModel) updateData(force bool) {
 	// 获取 container
 	rows := make([]table.Row, 0, len(pod.Status.ContainerStatuses))
 	for _, container := range pod.Status.ContainerStatuses {
-		rows = append(rows, TemplateRender(comm.ConfigTemplateContainer, container))
+		rows = append(rows, TemplateRenderBody(comm.ConfigTemplateContainer, container))
 	}
 	ui.TableRowsSort(rows, comm.ShowKubeteaConfig().Sort.Container)
 
 	// 展示 init container
 	initRows := make([]table.Row, 0, len(pod.Status.InitContainerStatuses))
 	for _, container := range pod.Status.InitContainerStatuses {
-		initRows = append(initRows, TemplateRender(comm.ConfigTemplateContainer, container))
+		initRows = append(initRows, TemplateRenderBody(comm.ConfigTemplateContainer, container))
 	}
 	ui.TableRowsSort(initRows, comm.ShowKubeteaConfig().Sort.Container)
 	rows = append(rows, initRows...)
 
 	m.Table.SetRows(rows)
 	m.SubDescs = []string{
-		fmt.Sprintf("合计：%d", len(rows)),
-		fmt.Sprintf("数据更新时间：%s", lastUpdate.Format(time.DateTime)),
+		lang.Data(langTotalWithNumber, lang.Map{"number": len(rows)}),
+		lang.Data(langUpdateTime, lang.Map{"UpdateTime": lastUpdate.Format(time.DateTime)}),
 	}
 }
 
@@ -58,7 +58,7 @@ func ShowContainer(podName string, lastModel tea.Model) (tea.Model, error) {
 	}
 	m.Abstract.Model = m
 
-	m.TableFilter.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateContainer))
+	m.TableFilter.SetColumns(TemplateRenderColumn(comm.ConfigTemplateContainer))
 	m.updateData(false)
 
 	m.UpdateEvent = func(msg tea.Msg) (tea.Model, tea.Cmd) {

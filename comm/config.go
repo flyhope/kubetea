@@ -13,12 +13,17 @@ import (
 //go:embed kubetea.yaml
 var kubeteaDefaultYaml []byte
 
+// ShowConfigFilePath kubetea config file path
+var ShowConfigFilePath = sync.OnceValue(func() string {
+	return FixPath(Context.String("config"))
+})
+
 // ShowKubeteaConfig 获取k.yaml配置
 var ShowKubeteaConfig = sync.OnceValue(func() *KubeteaConfig {
 	config := new(KubeteaConfig)
 
 	// 文件件在才继续加载配置
-	configFilePath := FixPath(Context.String("config"))
+	configFilePath := ShowConfigFilePath()
 
 	yamlContent := kubeteaDefaultYaml
 	_, errStat := os.Stat(configFilePath)
@@ -54,6 +59,7 @@ var ShowKubeteaConfig = sync.OnceValue(func() *KubeteaConfig {
 
 // KubeteaConfig YAML配置定义
 type KubeteaConfig struct {
+	Language         string                                       `yaml:"language"`                  // 显示语言设置
 	PodCacheLivetime uint32                                       `yaml:"pod_cache_livetime_second"` // 缓存Pod过期时间，过期自动刷新
 	Log              KubeteaConfigLog                             `yaml:"log"`                       // 日志配置
 	ClusterByLabel   string                                       `yaml:"cluster_by_label"`          // 筛选显示cluster的Label的名称

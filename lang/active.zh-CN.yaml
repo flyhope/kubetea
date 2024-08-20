@@ -1,0 +1,30 @@
+cluster:
+  hash: sha1-da68bf3a55223d19ffeabebe48b0af570d763307
+  other: 集群
+containerName:
+  hash: sha1-255a762c36cdae2fe950e67e8b8a4efb260e7540
+  other: 容器名称
+createdAt:
+  hash: sha1-19b6b586f60dbae898ca8e37ef98779f6bf2118c
+  other: 启动时间
+data_update_time:
+  hash: sha1-c9b4161183a72bcd0113aea04efa894d09c13f19
+  other: '数据更新时间: {{.UpdateTime}}'
+imageUrl:
+  hash: sha1-0e76292794888d4f1fa75fb3aff4ca27c58f56a6
+  other: 镜像地址
+name:
+  hash: sha1-6ae999552a0d2dca14d62e2bc8b764d377b1dd6c
+  other: 名称
+number:
+  hash: sha1-53b0a1b2fadf4e040cdc2155a7340de24aca93cb
+  other: 数量
+ready:
+  hash: sha1-75c0533730caf1f78561c0883fb87bc8d98ef04b
+  other: 就绪
+status:
+  hash: sha1-48a3661d846478fa991a825ebd10b78671444b5b
+  other: 状态
+total_with_number:
+  hash: sha1-fd5a6ff922cc49168c6cdb98bad09e7e13641c10
+  other: '合计: {{.number}}'

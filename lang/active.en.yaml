@@ -1,0 +1,10 @@
+cluster: cluster
+containerName: container
+createdAt: created at
+data_update_time: 'Data update time: {{.UpdateTime}}'
+imageUrl: image
+name: name
+number: number
+ready: ready
+status: status
+total_with_number: 'Total: {{.number}}'

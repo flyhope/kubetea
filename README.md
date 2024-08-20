@@ -72,6 +72,7 @@ kubetea $ipOrPodname
 - [x] support kubeconfig
 - [x] support context
 - [x] support namespace
+- [x] support i18n multi language (en/zh/custom)
 
 ## Thanks
 

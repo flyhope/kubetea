@@ -8,10 +8,12 @@ require (
 	github.com/charmbracelet/lipgloss v0.12.1
 	github.com/fatih/color v1.17.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f
+	github.com/nicksnyder/go-i18n/v2 v2.4.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/urfave/cli/v2 v2.27.2
 	golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561
+	golang.org/x/text v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.30.2
 	k8s.io/apimachinery v0.30.2
@@ -63,7 +65,6 @@ require (
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
