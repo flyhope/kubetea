@@ -31,7 +31,7 @@ func (c *podModel) updateData(force bool) {
 	rows := make([]table.Row, 0, len(pods.Items))
 	for _, pod := range pods.Items {
 		if pod.Labels["app"] == c.app {
-			rows = append(rows, TemplateRender(comm.ConfigTemplatePod, pod))
+			rows = append(rows, TemplateRenderBody(comm.ConfigTemplatePod, pod))
 
 			//name := pod.Name
 			////if strings.Index(name, app) == 0 {
@@ -62,7 +62,7 @@ func ShowPod(app string, lastModel tea.Model) (tea.Model, error) {
 	}
 	m.Abstract.Model = m
 
-	m.TableFilter.Table.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplatePod))
+	m.TableFilter.Table.SetColumns(TemplateRenderColumn(comm.ConfigTemplatePod))
 	m.Table.SetSortIndex(comm.ShowKubeteaConfig().Sort.Cluster)
 	m.TableFilter.Focus()
 	m.updateData(false)

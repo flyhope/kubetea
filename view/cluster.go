@@ -64,7 +64,7 @@ func (c *clusterModel) updateData(force bool) {
 	// 拼接UI列表数据
 	rows := make([]table.Row, 0, len(clusterRows))
 	for _, row := range clusterRows {
-		rows = append(rows, TemplateRender(comm.ConfigTemplateCluster, row))
+		rows = append(rows, TemplateRenderBody(comm.ConfigTemplateCluster, row))
 	}
 
 	// 排序
@@ -85,7 +85,7 @@ func ShowCluster() (tea.Model, error) {
 	m := &clusterModel{
 		TableFilter: ui.FetchTableFilter(),
 	}
-	m.TableFilter.SetColumns(comm.ShowKubeteaConfig().ShowTemplateColumn(comm.ConfigTemplateCluster))
+	m.TableFilter.SetColumns(TemplateRenderColumn(comm.ConfigTemplateCluster))
 	m.Table.SetSortIndex(comm.ShowKubeteaConfig().Sort.Cluster)
 	m.updateData(false)
 

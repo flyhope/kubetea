@@ -41,7 +41,7 @@ var bundle = sync.OnceValue(func() *i18n.Bundle {
 // DefaultLang 获取当前环境的语言
 var DefaultLang = sync.OnceValue(func() string {
 	lang := comm.ShowKubeteaConfig().Language
-	if lang != "" {
+	if lang != "" && lang != "auto" {
 		return lang
 	}
 

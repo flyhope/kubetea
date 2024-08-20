@@ -2,6 +2,7 @@ package view
 
 import (
 	"bytes"
+	"github.com/charmbracelet/bubbles/table"
 	"github.com/flyhope/kubetea/comm"
 	"github.com/flyhope/kubetea/lang"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -74,10 +75,11 @@ var TemplateStore = &templateStore{
 	store: make(map[comm.ConfigTemplateName][]*template.Template),
 }
 
-// Get 根据KEY获取一个模板
-func (t *templateStore) Get(name comm.ConfigTemplateName) []*template.Template {
+// GetBody 根据KEY获取一个模板
+func (t *templateStore) GetBody(name comm.ConfigTemplateName) []*template.Template {
+	storeField := "body-" + name
 	t.lock.RLock()
-	data, ok := t.store[name]
+	data, ok := t.store[storeField]
 	t.lock.RUnlock()
 	if !ok {
 		var err error
@@ -86,16 +88,41 @@ func (t *templateStore) Get(name comm.ConfigTemplateName) []*template.Template {
 			logrus.WithFields(logrus.Fields{"name": name}).Fatal(err)
 		}
 		t.lock.Lock()
-		t.store[name] = data
+		t.store[storeField] = data
 		t.lock.Unlock()
 	}
 
 	return data
 }
 
-// TemplateRender 根据名称批量渲染模板
-func TemplateRender(name comm.ConfigTemplateName, data any) []string {
-	tmpls := TemplateStore.Get(name)
+// GetColumn 根据KEY获取一个模板
+func (t *templateStore) GetColumn(name comm.ConfigTemplateName) []*template.Template {
+	storeField := "column-" + name
+	t.lock.RLock()
+	data, ok := t.store[storeField]
+	t.lock.RUnlock()
+	if !ok {
+		configTemplate := comm.ShowKubeteaConfig().Template[name]
+
+		data = make([]*template.Template, 0, len(configTemplate.Column))
+		for _, column := range configTemplate.Column {
+			newTmpl, errParse := NewTmplParse(column.Title)
+			if errParse != nil {
+				logrus.WithFields(logrus.Fields{"name": name, "column": column}).Fatal(errParse)
+			}
+			data = append(data, newTmpl)
+		}
+		t.lock.Lock()
+		t.store[storeField] = data
+		t.lock.Unlock()
+	}
+
+	return data
+}
+
+// TemplateRenderBody 根据名称批量渲染模板
+func TemplateRenderBody(name comm.ConfigTemplateName, data any) []string {
+	tmpls := TemplateStore.GetBody(name)
 	result := make([]string, 0, len(tmpls))
 	for _, tmpl := range tmpls {
 		var buf bytes.Buffer
@@ -104,5 +131,28 @@ func TemplateRender(name comm.ConfigTemplateName, data any) []string {
 		}
 		result = append(result, buf.String())
 	}
+	return result
+}
+
+// TemplateRenderColumn render table column
+func TemplateRenderColumn(name comm.ConfigTemplateName) []table.Column {
+	tmpls := TemplateStore.GetColumn(name)
+
+	columnConfig := comm.ShowKubeteaConfig().ShowTemplateColumn(name)
+	result := make([]table.Column, 0, len(columnConfig))
+	for idx, column := range columnConfig {
+		tableColumn := table.Column{
+			Width: column.Width,
+		}
+		var buf bytes.Buffer
+		if errExecute := tmpls[idx].Execute(&buf, nil); errExecute != nil {
+			logrus.Warnln(errExecute)
+			tableColumn.Title = column.Title
+		} else {
+			tableColumn.Title = buf.String()
+		}
+		result = append(result, tableColumn)
+	}
+
 	return result
 }
