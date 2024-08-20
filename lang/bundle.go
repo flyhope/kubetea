@@ -9,6 +9,7 @@ import (
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 )
@@ -33,7 +34,25 @@ var bundle = sync.OnceValue(func() *i18n.Bundle {
 		}
 	}
 
-	// @todo load user all language yaml file
+	// scan dir, load user all language yaml file (active.*.yaml)
+	userLangDir := filepath.Dir(comm.ShowConfigFilePath()) + "/lang"
+	if _, err := os.Stat(userLangDir); err == nil {
+		files, err := os.ReadDir(userLangDir)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{"dir": userLangDir}).Fatal(err)
+		}
+		for _, file := range files {
+			// filter active.*.yaml
+			if !strings.HasPrefix(file.Name(), "active.") || !strings.HasSuffix(file.Name(), ".yaml") {
+				continue
+			}
+
+			_, err := b.LoadMessageFile(userLangDir + "/" + file.Name())
+			if err != nil {
+				logrus.WithFields(logrus.Fields{"file": file.Name()}).Fatal(err)
+			}
+		}
+	}
 
 	return b
 })

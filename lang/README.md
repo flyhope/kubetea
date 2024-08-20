@@ -50,3 +50,8 @@ example: add a new language `fr`
    goi18n merge -format=yaml active.*.yaml translate.*.yaml
    rm -f translate.*.yaml
    ```
+   
+### Add a new language file, but not build in kubetea
+
+1. look up ↑ `Add a new language` and do it. 
+2. copy `active.xx.yaml` to `~/.kubetea/lang/active.xx.yaml`.

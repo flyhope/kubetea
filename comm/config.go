@@ -13,12 +13,17 @@ import (
 //go:embed kubetea.yaml
 var kubeteaDefaultYaml []byte
 
+// ShowConfigFilePath kubetea config file path
+var ShowConfigFilePath = sync.OnceValue(func() string {
+	return FixPath(Context.String("config"))
+})
+
 // ShowKubeteaConfig 获取k.yaml配置
 var ShowKubeteaConfig = sync.OnceValue(func() *KubeteaConfig {
 	config := new(KubeteaConfig)
 
 	// 文件件在才继续加载配置
-	configFilePath := FixPath(Context.String("config"))
+	configFilePath := ShowConfigFilePath()
 
 	yamlContent := kubeteaDefaultYaml
 	_, errStat := os.Stat(configFilePath)
