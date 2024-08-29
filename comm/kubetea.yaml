@@ -45,25 +45,27 @@ template:
     column:
       - { title: '{{ txt "name" }}', width: 0 }
       - { title: 'IP', width: 15 }
+      - { title: '{{ txt "createdAt" }}', width: 19 }
       - { title: '{{ txt "status" }}', width: 4 }
       - { title: '{{ txt "ready" }}', width: 4 }
-      - { title: '{{ txt "createdAt" }}', width: 19 }
     body:
       # first cloume must be .Name
       - "{{ .Name }}"
       - "{{ .Status.PodIP }}"
+      - "{{ if .Status.StartTime }}{{ FormatTime .Status.StartTime.Time }}{{else}}-{{end}}"
       - "{{ PodPhaseView . }}"
       - "{{ PodReadyView . }}"
-      - "{{ if .Status.StartTime }}{{ FormatTime .Status.StartTime.Time }}{{else}}-{{end}}"
   container:
     column:
       - { title: '{{ txt "containerName" }}', width: 0 }
       - { title: '{{ txt "imageUrl" }}', width: 0 }
+      - { title: '{{ txt "createdAt" }}', width: 19 }
       - { title: '{{ txt "status" }}', width: 4 }
-      - { title: '{{ txt "createdAt" }}', width: 4 }
+      - { title: '{{ txt "ready" }}', width: 4 }
     body:
       # first cloume must be .Name
       - "{{ .Name }}"
       - "{{ .Image }}"
+      - "{{ if .State.Running }}{{ FormatTime .State.Running.StartedAt.Time }}{{else}}-{{end}}"
       - "{{ ContainerStateView . }}"
       - "{{ BoolView .Ready }}"
