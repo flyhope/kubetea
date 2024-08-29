@@ -44,6 +44,7 @@ func (m *containerModel) updateData(force bool) {
 
 	m.Table.SetRows(rows)
 	m.SubDescs = []string{
+		pod.Name,
 		lang.Data(langTotalWithNumber, lang.Map{"number": len(rows)}),
 		lang.Data(langUpdateTime, lang.Map{"UpdateTime": lastUpdate.Format(time.DateTime)}),
 	}
