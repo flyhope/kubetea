@@ -22,6 +22,7 @@ var lastTableFilter = newTableFilter()
 // Reset 重置表格数据
 func (m *TableFilter) Reset() {
 	m.Input.SetValue("")
+	m.Table.filterValue = ""
 
 	if len(m.Table.Rows()) > 0 {
 		m.Table.SetCursor(0)
